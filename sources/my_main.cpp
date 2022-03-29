@@ -55,6 +55,7 @@ int	main(int argc, char** argv){
 	stack_int_std.push(5);
 	stack_int_std.push(6);
 	stack_int_std.push(7);
+	
 	stack_int_ft.push(5);
 	stack_int_ft.push(6);
 	stack_int_ft.push(7);
@@ -415,6 +416,47 @@ int	main(int argc, char** argv){
 	try_some_std.assign(try_some_std2.begin(), try_some_std2.end());
 	try_some.assign(try_some2.begin(), try_some2.end());
 	print_vectors(try_some_std, try_some);
+
+	std::cout << STD_PR_COLOR << "STD Vector compare: " << (try_some_std > try_some_std2) << std::endl;
+	std::cout <<  FT_PR_COLOR << " FT Vector compare: " << (try_some > try_some2) << std::endl;
+
+	std::cout << STD_PR_COLOR << "STD Vector create by count: " << try_some_std.capacity() << ", " << try_some_std.size() << std::endl;
+	std::cout <<  FT_PR_COLOR << " FT Vector create by count: " << try_some.capacity() << ", " << try_some.size() << std::endl;
+
+
+	try_some_std.push_back(77);
+	try_some.push_back(77);
+	try_some_std.push_back(88);
+	try_some.push_back(88);
+	try_some_std.push_back(99);
+	try_some.push_back(99);
+
+	std::cout << STD_PR_COLOR << "STD Vector create by count: " << try_some_std.capacity() << ", " << try_some_std.size() << std::endl;
+	std::cout <<  FT_PR_COLOR << " FT Vector create by count: " << try_some.capacity() << ", " << try_some.size() << std::endl;
+	print_vectors(try_some_std, try_some);
+
+
+	std::vector<int>	vec_std(11,5);
+	ft::vector<int>		vec_ft(11,5);
+
+	std::cout << STD_PR_COLOR << "STD Vector create by count: " << vec_std.capacity() << ", " << vec_std.size() << std::endl;
+	std::cout <<  FT_PR_COLOR << " FT Vector create by count: " << vec_ft.capacity() << ", " << vec_ft.size() << std::endl;
+
+	// vec_std.assign(10,5);
+	// vec_ft.assign(10,5);
+
+	vec_std = try_some_std;
+	vec_ft = try_some;
+
+	std::cout << STD_PR_COLOR << "STD Vector create by count: " << vec_std.capacity() << ", " << vec_std.size() << std::endl;
+	std::cout <<  FT_PR_COLOR << " FT Vector create by count: " << vec_ft.capacity() << ", " << vec_ft.size() << std::endl;
+
+	vec_std.pop_back();
+	vec_ft.pop_back();
+
+	std::cout << STD_PR_COLOR << "STD Vector create by count: " << vec_std.capacity() << ", " << vec_std.size() << std::endl;
+	std::cout <<  FT_PR_COLOR << " FT Vector create by count: " << vec_ft.capacity() << ", " << vec_ft.size() << std::endl;
+
 
 	std::cout << sizeof(int) << std::endl;
 

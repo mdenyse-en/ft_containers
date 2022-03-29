@@ -1,12 +1,12 @@
 #ifndef STACK_HPP
 #define STACK_HPP
 
-//#include "vector.hpp"
+#include "vector.hpp"
 #include <vector>
 
 namespace ft
 {
-	template<class T, class Container = std::vector<T> >
+	template<class T, class Container = ft::vector<T> >
 	class stack
 	{
 		typedef	Container							container_type;
@@ -31,7 +31,7 @@ namespace ft
 			friend bool	operator>=(const ft::stack<TS, ContainerS>& lhs, const ft::stack<TS, ContainerS>& rhs);
 
 		public:
-			explicit	stack(const container_type& cont = container_type()):_c(cont){};// {_c = cont;};
+			explicit	stack(const container_type& cont = container_type())/*:_c(cont){};*/ {_c = cont;};
 			stack(const stack& other){_c = other._c;};
 			~stack(){};
 

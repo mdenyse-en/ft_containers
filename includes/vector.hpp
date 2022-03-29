@@ -47,7 +47,8 @@ namespace ft{
 			};
 
 			template<class InputIt>
-			vector(InputIt first, InputIt last, const allocator_type& alloc = allocator_type()):
+			vector(InputIt first, InputIt last, const allocator_type& alloc = allocator_type(),
+			typename	ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type = 0):
 			_alloc(alloc), _start_cont(nullptr), _end_cont(nullptr), _end_el(nullptr)
 			{
 				this->insert(this->begin(), first, last);
@@ -76,25 +77,28 @@ namespace ft{
 				if (this != &other)
 				{
 					this->clear();
+					if (this->capacity() < other.size())
+						this->reserve(other.size());
 					this->insert(this->begin(), other.begin(), other.end());
 				}
 				return (*this);
 			};
 
 			void	assign(size_type count, const_reference value){
-				this->clear();
-				this->_alloc.deallocate(this->_start_cont, this->capacity());
-				this->_start_cont = nullptr;
-				this->_end_cont = this->_start_cont;
+				// this->clear();
+				// this->_alloc.deallocate(this->_start_cont, this->capacity());
+				// this->_start_cont = nullptr;
+				// this->_end_cont = this->_start_cont;
 				*this = vector(count, value);
 			};
 			
 			template<class InputIt>
-			void	assign(InputIt first, InputIt last){
-				this->clear();
-				this->_alloc.deallocate(this->_start_cont, this->capacity());
-				this->_start_cont = nullptr;
-				this->_end_cont = this->_start_cont;
+			void	assign(InputIt first, InputIt last,
+			typename	ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type = 0){
+				// this->clear();
+				// this->_alloc.deallocate(this->_start_cont, this->capacity());
+				// this->_start_cont = nullptr;
+				// this->_end_cont = this->_start_cont;
 				*this = vector(first, last);
 			};
 			
@@ -396,8 +400,8 @@ namespace ft{
 			};
 			void	pop_back(void)
 			{
-				this->_end_cont--;
-				this->_alloc.destroy(this->_end_cont);
+				this->_end_el--;
+				this->_alloc.destroy(this->_end_el);
 			};
 			void	resize(size_type count, value_type value = value_type()){
 				if (count == this->size()){
@@ -447,8 +451,47 @@ namespace ft{
 			};
 	};
 
-//	template<class T, class Alloc>
-//	bool operator==(const ft::vector<T, Alloc>& lhs, const ft::vector<T, Alloc>& rhs)
+	template<class T, class Alloc>
+	bool operator==(const ft::vector<T, Alloc>& lhs, const ft::vector<T, Alloc>& rhs){
+		if (lhs.size() != rhs.size())
+			return (false);
+		typename ft::vector<T>::const_iterator	it_lhs = lhs.begin();
+		typename ft::vector<T>::const_iterator	it_rhs = rhs.begin();
+		while (it_lhs != lhs.end()){
+			if (*it_lhs != *it_rhs)
+				return (0);
+			it_lhs++;
+			it_rhs++;
+		}
+		return (1);
+	}
+
+	template<class T, class Alloc>
+	bool operator!=(const ft::vector<T, Alloc>& lhs, const ft::vector<T, Alloc>& rhs){
+		return !(lhs == rhs);
+	}
+
+	template<class T, class Alloc>
+	bool operator<(const ft::vector<T, Alloc>& lhs, const ft::vector<T, Alloc>& rhs){
+		return (ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
+	}
+
+	template<class T, class Alloc>
+	bool operator<=(const ft::vector<T, Alloc>& lhs, const ft::vector<T, Alloc>& rhs){
+		return (lhs < rhs || lhs == rhs);
+	}
+
+	template<class T, class Alloc>
+	bool operator>(const ft::vector<T, Alloc>& lhs, const ft::vector<T, Alloc>& rhs){
+		return (!(lhs < rhs) && (lhs != rhs));
+	}
+
+	template<class T, class Alloc>
+	bool operator>=(const ft::vector<T, Alloc>& lhs, const ft::vector<T, Alloc>& rhs){
+		return (!(lhs < rhs));
+	}
+
+
 }
 
 #endif
