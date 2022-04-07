@@ -15,6 +15,7 @@
 
 #include "../includes/stack.hpp"
 #include "../includes/vector.hpp"
+#include "../includes/map.hpp"
 #include <stdlib.h>
 
 #define STD_PR_COLOR "\x1b[32m"
@@ -40,6 +41,30 @@ void	print_vectors(std::vector<int>& std_v, ft::vector<int>& ft_v){
 	ft::vector<int>::iterator		ft_it;
 	for (ft_it = ft_v.begin(); ft_it != ft_v.end(); ft_it++){
 		std::cout << "[" << i++ << "]=" << *ft_it <<" ";
+	}
+	std::cout << std::endl;
+}
+
+void	print_maps(std::map<int, int> map_std, ft::map<int, int> map_ft){
+
+//	std::cout <<  FT_PR_COLOR << " FT map check END == BEGIN: " << (map_ft.begin() == map_ft.end() )<< std::endl;
+
+
+	std::cout << STD_PR_COLOR << "STD map output by iterator:" << std::endl;
+
+	std::map<int, int>::iterator	it_map_std;
+	for (it_map_std = map_std.begin(); it_map_std != map_std.end(); it_map_std++){
+		std::cout << (*it_map_std).second << " ";
+	}
+	std::cout << FT_PR_COLOR << std::endl;
+
+
+	//map_ft.print();
+	std::cout <<  FT_PR_COLOR << " FT map output by iterator:" << std::endl;
+
+	ft::map<int, int>::iterator	it_map_ft;
+	for (it_map_ft = map_ft.begin(); it_map_ft != map_ft.end(); it_map_ft++){
+		std::cout << (*it_map_ft).second << " ";
 	}
 	std::cout << std::endl;
 }
@@ -457,8 +482,306 @@ int	main(int argc, char** argv){
 	std::cout << STD_PR_COLOR << "STD Vector create by count: " << vec_std.capacity() << ", " << vec_std.size() << std::endl;
 	std::cout <<  FT_PR_COLOR << " FT Vector create by count: " << vec_ft.capacity() << ", " << vec_ft.size() << std::endl;
 
+	//ft::vector<int>::const_iterator	it_vec_ft_const = vec_ft.begin();
 
-	std::cout << sizeof(int) << std::endl;
 
-	//while(1);
+
+/////////////////////////////////////////////////////////////////// __  __    _    __
+///////////////////////////// MAP ///////////////////////////////// | \/ |   /-\   |_)
+/////////////////////////////////////////////////////////////////// |    |  /   \  |
+
+	std::cout << RESET_COLOR << "\n" << L_CELLS << " MAP " << R_CELLS << std::endl;
+
+
+	std::map<int, int>	map_std;
+	ft::map<int, int>	map_ft;
+
+	std::cout <<  FT_PR_COLOR << " FT map check END == BEGIN: " << (map_ft.begin() == map_ft.end() )<< std::endl;
+
+
+	print_maps(map_std, map_ft);
+
+
+	std::cout << STD_PR_COLOR << "STD map check EMPTY: " << map_std.empty() << std::endl;
+	std::cout <<  FT_PR_COLOR << " FT map check EMPTY: " << map_ft.empty() << std::endl;
+
+	map_std.insert(std::make_pair(-11,-11));
+	map_std.insert(std::make_pair(11,11));
+	map_std.insert(std::make_pair(5, 5));
+	map_std.insert(std::make_pair(3, 3));
+	map_std.insert(std::make_pair(7, 7));
+	map_std.insert(std::make_pair(18, 18));
+	map_std.insert(std::make_pair(18, 10));
+//	map_std.insert(std::make_pair(7, 7));
+//	map_std.insert(std::make_pair(-3, -3));
+
+	map_ft.insert(ft::make_pair(-11,-11));
+	map_ft.insert(ft::make_pair(11, 11));
+	map_ft.insert(ft::make_pair(5, 5));
+	map_ft.insert(ft::make_pair(3, 3));
+	map_ft.insert(ft::make_pair(7, 7));
+	map_ft.insert(ft::make_pair(18, 18));
+	map_ft.insert(ft::make_pair(18, 10));
+//	map_ft.insert(ft::make_pair(7, 7));
+
+	print_maps(map_std, map_ft);
+
+
+	std::cout << STD_PR_COLOR << "STD map check EMPTY after insert: " << map_std.empty() << std::endl;
+	std::cout <<  FT_PR_COLOR << " FT map check EMPTY after insert: " << map_ft.empty() << std::endl;
+
+	std::cout << STD_PR_COLOR << "STD map SIZE: " << map_std.size() << std::endl;
+	std::cout <<  FT_PR_COLOR << " FT map SIZE: " << map_ft.size() << std::endl;
+
+
+	int	map_el = 9;
+	std::cout << STD_PR_COLOR << "STD map el[" << map_el << "]: " << map_std[map_el] << std::endl;
+//	std::cout << "try some" << std::endl;
+	std::cout <<  FT_PR_COLOR << " FT map el[" << map_el << "]: " << map_ft[map_el] << std::endl;
+
+
+//	map_std[7] = 77;
+//	std::cout << map_std[7] << std::endl;
+	std::cout << STD_PR_COLOR << "STD map SIZE: " << map_std.size() << std::endl;
+	std::cout <<  FT_PR_COLOR << " FT map SIZE: " << map_ft.size() << std::endl;
+
+	print_maps(map_std, map_ft);
+
+	map_std[15] = 15;
+	map_std[6] = 6;
+	map_std[4] = 4;
+	map_std[28] = 28;
+	map_std[9] = 9;
+	map_ft[15] = 15;
+	map_ft[6] = 6;
+	map_ft[4] = 4;
+	map_ft[28] = 28;
+	map_ft[9] = 9;
+
+	print_maps(map_std, map_ft);
+
+	std::cout << STD_PR_COLOR << "STD map MIN: " << (map_std.begin())->second << std::endl;
+	std::cout <<  FT_PR_COLOR << " FT map MIN: " << map_ft.begin()->second << std::endl;
+
+	std::map<int, int>::iterator	it_map_std =  map_std.begin();
+	ft::map<int, int>::iterator	it_map_ft =  map_ft.begin();
+	
+	it_map_std++;
+	it_map_std++;
+	it_map_std++;
+	it_map_std++;
+	it_map_std++;
+	it_map_std++;
+	it_map_std++;
+	it_map_std++;
+	it_map_std++;
+	it_map_std++;
+	++it_map_ft;
+	++it_map_ft;
+	++it_map_ft;
+	++it_map_ft;
+	++it_map_ft;
+	++it_map_ft;
+	++it_map_ft;
+	++it_map_ft;
+	++it_map_ft;
+	++it_map_ft;
+	//it_map_ft = it_map_ft + 3;
+
+	std::cout << STD_PR_COLOR << "STD map output by iterator ++: " << std::endl;
+	for (it_map_std = map_std.begin(); it_map_std != map_std.end(); ++it_map_std){
+		std::cout << it_map_std->second << " ";
+	}
+	std::cout << std::endl;
+
+	std::cout <<  FT_PR_COLOR << " FT map output by iterator ++: " << std::endl;
+	for (it_map_ft = map_ft.begin(); it_map_ft != map_ft.end(); ++it_map_ft){
+		std::cout << it_map_ft->second << " ";
+	}
+	std::cout << std::endl;
+
+
+	std::cout << STD_PR_COLOR << "STD map BEGIN() iterator ++: " << map_std.begin()->second << std::endl;
+	std::cout <<  FT_PR_COLOR << " FT map BEGIN() iterator ++: " << map_ft.begin()->second << std::endl;
+
+	--it_map_std;
+	--it_map_std;
+	--it_map_std;
+	--it_map_std;
+	--it_map_std;
+	--it_map_std;
+	--it_map_std;
+	--it_map_std;
+	--it_map_std;
+	--it_map_std;
+	--it_map_ft;
+	--it_map_ft;
+	--it_map_ft;
+	--it_map_ft;
+	--it_map_ft;
+	--it_map_ft;
+	--it_map_ft;
+	--it_map_ft;
+	--it_map_ft;
+	--it_map_ft;
+
+	std::cout << STD_PR_COLOR << "STD map BEGIN() iterator --: " << it_map_std->second << std::endl;
+	std::cout <<  FT_PR_COLOR << " FT map BEGIN() iterator --: " << it_map_ft->second << std::endl;
+
+	std::cout << STD_PR_COLOR << "STD map MAX: " << (--map_std.end())->second << std::endl;
+	std::cout <<  FT_PR_COLOR << " FT map MAX: " << (--map_ft.end())->second << std::endl;
+
+	std::cout << STD_PR_COLOR << "STD map PRE elem 8: " << map_std.lower_bound(8)->second << std::endl;
+	std::cout <<  FT_PR_COLOR << " FT map PRE elem 8: " << map_ft.lower_bound(8)->second << std::endl;
+
+
+	std::map<int, int>	map_std2;
+	ft::map<int, int>	map_ft2;
+
+	map_std2.insert(std::make_pair(-11, -11));
+	map_ft2.insert(ft::make_pair(-11, -11));
+
+	std::cout << STD_PR_COLOR << "STD map END() == another STD map END(): " << (map_std.end() == map_std2.end()) << std::endl;
+	std::cout <<  FT_PR_COLOR << " FT map END() == another STD map END(): " << (map_ft.end() == map_ft2.end()) << std::endl;
+
+	print_maps(map_std2, map_ft2);
+
+std::cout <<	map_std2.erase(-11) << std::endl;
+std::cout <<	map_std2.erase(-11) << std::endl;
+std::cout <<	map_ft2.erase(-11)  << std::endl;
+std::cout <<	map_ft2.erase(-11) << std::endl;
+
+	map_ft2[30];
+	map_ft2[33] = 33;
+
+	map_ft2.erase(33);
+	map_ft2.erase(30);
+
+	std::cout << STD_PR_COLOR << "STD map END() == another STD map END(): " << &(*map_std2.begin()) << " " << &(*map_std2.end()) << std::endl;
+	std::cout <<  FT_PR_COLOR << " FT map END() == another STD map END(): " << &(*map_ft2.begin()) << " " << &(*map_ft2.end())  << std::endl;
+
+	print_maps(map_std2, map_ft2);
+
+
+	int	n_map_find = 7;
+//	std::cout << STD_PR_COLOR << "STD map FIND(" << n_map_find << "): " << &(*map_ft.find(n_map_find)) << std::endl;
+
+	std::cout << STD_PR_COLOR << "STD map FIND(" << n_map_find << "): " << (map_std.find(n_map_find)->second) << std::endl;
+	std::cout <<  FT_PR_COLOR << " FT map FIND(" << n_map_find << "): " << (map_ft.find(n_map_find)->second) << std::endl;
+
+
+	n_map_find = 8;
+//	std::cout << STD_PR_COLOR << "STD map FIND(" << n_map_find << "): " << &(*map_ft.find(n_map_find)) << std::endl;
+
+	std::cout << STD_PR_COLOR << "STD map FIND(" << n_map_find << ") == END(): " << (map_std.find(n_map_find) == map_std.end()) << std::endl;
+	std::cout <<  FT_PR_COLOR << " FT map FIND(" << n_map_find << ") == END(): " << (map_ft.find(n_map_find) == map_ft.end()) << std::endl;
+
+	print_maps(map_std, map_ft);
+
+	int	n_map_at = 9;
+	std::cout << STD_PR_COLOR << "STD map AT(" << n_map_at << "): " << map_std.at(n_map_at) << std::endl;
+	std::cout <<  FT_PR_COLOR << " FT map AT(" << n_map_at << "): " << map_ft.at(n_map_at) << std::endl;
+
+	try{
+		std::cout << STD_PR_COLOR << "STD map AT(" << -20 << "): " << map_std.at(-20) << std::endl;
+	}
+	catch (std::exception& ex){
+		std::cout << ex.what() << std::endl;
+	}
+
+	try{
+		std::cout << STD_PR_COLOR << " FT map AT(" << -20 << "): " << map_ft.at(-20) << std::endl;
+	}
+	catch (std::exception& ex){
+		std::cout << ex.what() << std::endl;
+	}
+
+	std::cout << "tree output:" << std::endl;
+	map_ft.print();
+
+	print_maps(map_std, map_ft);
+
+
+	std::map<int, int>	map_std3 = map_std;
+	ft::map<int, int>	map_ft3 = map_ft;
+
+	print_maps(map_std3, map_ft3);
+
+	map_ft3.print();
+
+	std::map<int, int>	map_std4(map_std);
+	ft::map<int, int>	map_ft4(map_ft);
+
+	map_std4[9] = 999;
+	map_ft4[9] = 999;
+
+	map_ft4.print();
+
+	print_maps(map_std4, map_ft4);
+	print_maps(map_std, map_ft);
+
+
+	std::map<int, int>	map_std5(map_std.begin(), map_std.end());
+	ft::map<int, int>	map_ft5(map_ft.begin(), map_ft.end());
+
+	map_ft5.print();
+
+	print_maps(map_std5, map_ft5);
+	print_maps(map_std, map_ft);
+
+
+	map_std.clear();
+	map_ft.clear();
+
+
+	std::cout << STD_PR_COLOR << "STD SIZE after CLEAR: " << map_std.size() << std::endl;
+	std::cout <<  FT_PR_COLOR << " FT SIZE after CLEAR: " << map_ft.size() << std::endl;
+
+	print_maps(map_std, map_ft);
+
+
+	std::pair<std::map<int, int>::iterator, bool>	para_std = map_std.insert(std::make_pair(4, 4));
+	ft::pair<ft::map<int, int>::iterator, bool>	para_ft = map_ft.insert(ft::make_pair(4, 4));
+
+	para_std = map_std.insert(std::make_pair(4, 44));
+	para_ft = map_ft.insert(ft::make_pair(4, 44));
+
+	std::cout << STD_PR_COLOR << "STD INSERT return: " << (para_std.first)->second << " " << para_std.second << std::endl;
+	std::cout <<  FT_PR_COLOR << " FT INSERT return: " << (para_ft.first)->second << " " << para_ft.second << std::endl;
+
+	std::cout << STD_PR_COLOR << "STD SIZE after CLEAR: " << map_std.size() << std::endl;
+	std::cout <<  FT_PR_COLOR << " FT SIZE after CLEAR: " << map_ft.size() << std::endl;
+
+
+	map_std.swap(map_std4);
+	map_ft.swap(map_ft4);
+
+	print_maps(map_std, map_ft);
+
+	std::cout << STD_PR_COLOR << "STD LOWER_BOUND (10): " << map_std.lower_bound(10)->second << std::endl;
+	std::cout <<  FT_PR_COLOR << " FT LOWER_BOUND (10): " << map_ft.lower_bound(10)->second << std::endl;
+
+	std::cout << STD_PR_COLOR << "STD UPPER_BOUND (15): " << map_std.upper_bound(15)->second << std::endl;
+	std::cout <<  FT_PR_COLOR << " FT UPPER_BOUND (15): " << map_ft.upper_bound(15)->second << std::endl;
+
+	print_maps(map_std, map_ft);
+
+	std::cout << STD_PR_COLOR << "STD EQUAL_RANGE (15): " << map_std.equal_range(15).first->second << " - " << map_std.equal_range(15).second->second << std::endl;
+	std::cout <<  FT_PR_COLOR << " FT EQUAL_RANGE (15): " << map_ft.equal_range(15).first->second << " - " << map_ft.equal_range(15).second->second << std::endl;
+
+
+	std::map<int, int>::const_iterator	it_map_std_const = map_std.begin();
+//	ft::map<int, int>::const_iterator	it_map_ft_const = map_ft.begin();
+
+	// std::cout << STD_PR_COLOR << "STD const_iterator BEGIN(): " << it_map_std_const->second << std::endl;
+	// std::cout <<  FT_PR_COLOR << " FT const_iterator BEGIN(): " << it_map_ft_const->second << std::endl;
+
+	// it_map_std_const++;
+//	it_map_std_const->second = 5;
+
+	// std::cout << STD_PR_COLOR << "STD const_iterator BEGIN(): " << it_map_std_const->second << std::endl;
+	// std::cout <<  FT_PR_COLOR << " FT const_iterator BEGIN(): " << it_map_ft_const->second << std::endl;
+
+
+	while(1);
 }

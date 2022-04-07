@@ -2,10 +2,13 @@ NAME	= contain
 
 INCS	= ./includes/stack.hpp \
 		./includes/vector.hpp \
-		./includes/iterators.hpp
-#		./includes/map.hpp
+		./includes/iterators.hpp \
+		./includes/map.hpp \
+		./includes/RBTree.hpp
 
-SRCS	= ./sources/my_main.cpp \
+SRCS	= ./sources/my_main.cpp
+# ./sources/main.cpp
+		
 #		./sources/stack.cpp
 
 OBJS	= $(SRCS:.cpp=.o)
