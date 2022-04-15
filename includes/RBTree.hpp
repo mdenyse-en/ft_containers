@@ -44,7 +44,7 @@ namespace ft{
 			Allocator			_alloc;
 
 		public:
-			RBTree(Compare comp = Compare(), Allocator alloc = Allocator()): _comp(comp), _alloc(alloc){
+			RBTree(const Compare& comp, Allocator alloc = Allocator()): _comp(comp), _alloc(alloc){
 				this->_end = _alloc.allocate(1);
 				_alloc.construct(this->_end, node_type(key_type(), black, nullptr)); //root /nullptr
 				this->_root = this->_end;
@@ -128,7 +128,8 @@ namespace ft{
 
 				node_type_pointer	tmp = this->_root;
 				while (tmp){
-					if (key < tmp->_key){
+					// if (key < tmp->_key)
+					if (_comp(key, tmp->_key)){
 						if (tmp->_left == nullptr){
 							tmp->_left = _alloc.allocate(1);
 							_alloc.construct(tmp->_left, node_type(key, red, tmp));
@@ -139,7 +140,7 @@ namespace ft{
 						else
 							tmp = tmp->_left;
 					}
-					else if (tmp->_key < key){
+					else if (_comp(tmp->_key, key)){//(tmp->_key < key)
 						if (tmp->_right == nullptr){
 							tmp->_right = _alloc.allocate(1);
 							_alloc.construct(tmp->_right, node_type(key, red, tmp));
@@ -221,22 +222,22 @@ namespace ft{
 			void	replace(T key){
 				node_type_pointer	tmp = this->_root;
 
-				while (tmp->_key.first != key.first){
-					if (key.first < tmp->_key.first)
+				while (_comp(tmp->_key, key) || _comp(key, tmp->_key)){ //(tmp->_key.first != key.first)
+					if (_comp(key, tmp->_key)) //key.first < tmp->_key.first
 						tmp = tmp->_left;
 					else
 						tmp = tmp->_right;
 				}
-				tmp->_key.second = key.second;
+				tmp->_key = key; // tmp->_key.second = key.second;
 			}
 
-			node_type_pointer	find_elem(const T key) const{
+			node_type_pointer	find_elem(T key){ //const?
 				node_type_pointer	tmp = this->_root;
 				while (tmp){
-					if (key.first < tmp->_key.first){
+					if (_comp(key, tmp->_key)){ //(key.first < tmp->_key.first)
 						tmp = tmp->_left;
 					}
-					else if (tmp->_key.first < key.first){
+					else if (_comp(tmp->_key, key)){ //(tmp->_key.first < key.first)
 						tmp = tmp->_right;
 					}
 					else {
@@ -250,12 +251,18 @@ namespace ft{
 				node_type_pointer	tmp = this->_root;
 
 				while (tmp != nullptr){
-					if (key.first == tmp->_key.first)
-						return (1);
-					if (key < tmp->_key)
+					if (_comp(tmp->_key, key)) // (tmp->_key < key)
+						tmp = tmp->_right;
+					else if (_comp(key, tmp->_key)) //(key < tmp->_key)
 						tmp = tmp->_left;
 					else
-						tmp = tmp->_right;
+						return (1);
+					// if (key.first == tmp->_key.first) //(key.first == tmp->_key.first)
+					// 	return (1);
+					// if (key < tmp->_key) //(key < tmp->_key)
+					// 	tmp = tmp->_left;
+					// else
+					// 	tmp = tmp->_right;
 				}
 				return (0);
 			}

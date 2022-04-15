@@ -84,15 +84,15 @@ namespace ft{
 			typedef	typename	std::ptrdiff_t				difference_type;
 			typedef				Compare						key_compare;
 			// typedef				less<value_type>			value_compare;
-			class	value_compare: ft::binary_function<value_type, value_type, bool>{
+			class	value_compare{//: ft::binary_function<value_type, value_type, bool>{
 				// friend class	map<key_type, mapped_type, key_compare, Allocator>;
 
 				// protected:
 					Compare	_comp;
 				
 				public:
-					value_compare(Compare c): _comp(c){};
-					bool	operator()(const value_type& lhs, const value_type& rhs){
+					value_compare(const key_compare& c): _comp(c){};
+					bool	operator()(const value_type& lhs, const value_type& rhs) const{
 						return (_comp(lhs.first, rhs.first));
 					}
 			};
@@ -101,23 +101,23 @@ namespace ft{
 			typedef	const		value_type&					const_reference;
 			typedef	typename	Allocator::pointer			pointer;
 			typedef	typename	Allocator::const_pointer	const_pointer;
-			typedef	typename	ft::RBTree<value_type, Compare>::node_type	node_type;
+			typedef	typename	ft::RBTree<value_type, value_compare>::node_type	node_type;
 			typedef	typename	ft::map_iterator<node_type>					iterator;
-			typedef	typename	ft::map_iterator<typename ft::RBTree<const value_type, Compare>::node_type>		const_iterator;
+			typedef	typename	ft::map_iterator<typename ft::RBTree<const value_type, value_compare>::node_type>		const_iterator;
 			typedef	typename	ft::reverse_iterator<iterator>			reverse_iterator;
 			typedef	typename	ft::reverse_iterator<const_iterator>	const_reverse_iterator;
 			
 
-			map(): _tree(), _alloc(Allocator()){};
+			map(): _tree(value_compare(key_compare())){};
 			explicit	map(const Compare& comp, const Allocator& alloc = Allocator()): _tree(), _comp(comp), _alloc(alloc){};
 
 			template<class InputIt>
 			map(InputIt first, InputIt last, const Compare& comp = Compare(), const Allocator& alloc = Allocator()):
-			_tree(), _comp(comp), _alloc(alloc){
+			_tree(value_compare(key_compare())), _comp(comp), _alloc(alloc){
 				this->insert(first, last);
 			};
 
-			map(const map& other): _tree(){
+			map(const map& other): _tree(value_compare(key_compare())){
 				//std::cout << "(map)" << std::endl;
 				this->_comp = other._comp;
 				this->_alloc = other._alloc;
@@ -357,7 +357,7 @@ namespace ft{
 			};
 
 		private:
-			ft::RBTree<value_type, key_compare>	_tree;
+			ft::RBTree<value_type, value_compare>	_tree;
 			allocator_type		_alloc;
 			Compare				_comp;
 			//typename ft::RBTree<value_type>::node_type_pointer	_end;
