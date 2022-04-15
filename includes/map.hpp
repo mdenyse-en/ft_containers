@@ -83,17 +83,29 @@ namespace ft{
 			typedef	typename	std::size_t					size_type;
 			typedef	typename	std::ptrdiff_t				difference_type;
 			typedef				Compare						key_compare;
-			typedef		less<value_type>			value_compare;
+			// typedef				less<value_type>			value_compare;
+			class	value_compare: ft::binary_function<value_type, value_type, bool>{
+				// friend class	map<key_type, mapped_type, key_compare, Allocator>;
+
+				// protected:
+					Compare	_comp;
+				
+				public:
+					value_compare(Compare c): _comp(c){};
+					bool	operator()(const value_type& lhs, const value_type& rhs){
+						return (_comp(lhs.first, rhs.first));
+					}
+			};
 			typedef				Allocator					allocator_type;
 			typedef				value_type&					reference;
 			typedef	const		value_type&					const_reference;
 			typedef	typename	Allocator::pointer			pointer;
 			typedef	typename	Allocator::const_pointer	const_pointer;
 			typedef	typename	ft::RBTree<value_type, Compare>::node_type	node_type;
-			typedef	typename	ft::map_iterator<node_type>			iterator;
+			typedef	typename	ft::map_iterator<node_type>					iterator;
 			typedef	typename	ft::map_iterator<typename ft::RBTree<const value_type, Compare>::node_type>		const_iterator;
-			//typedef	typename	ft::reverse_iterator<iterator>	reverse_iterator;
-			//typedef	typename	const ft::reverse_iterator<iterator>	const_reverse_iterator;
+			typedef	typename	ft::reverse_iterator<iterator>			reverse_iterator;
+			typedef	typename	ft::reverse_iterator<const_iterator>	const_reverse_iterator;
 			
 
 			map(): _tree(), _alloc(Allocator()){};
@@ -115,6 +127,17 @@ namespace ft{
 
 			~map(){
 			};
+
+			//////
+				// void	try_rightrotate(const T& key){
+				// 	this->_tree.rotate_right(this->_tree.find_elem(ft::make_pair(key, mapped_type())));
+				// }
+
+				// void	try_leftrotate(const T& key){
+				// 	this->_tree.rotate_left(this->_tree.find_elem(ft::make_pair(key, mapped_type())));
+				// }
+
+			/////
 
 			map&	operator=(const map& other){
 				//std::cout << "=" << std::endl;
@@ -167,8 +190,26 @@ namespace ft{
 			const_iterator	end() const{
 				return (const_iterator(this->_tree._end, this->_tree._end));
 			};
-			// iterator	rbegin(){};
-			// iterator	rend(){};
+			
+			reverse_iterator rbegin(void){
+				if (this->_tree.empty())
+					return (this->rend());
+				return (reverse_iterator(this->end()));
+			};
+
+			const_reverse_iterator rbegin(void) const{
+				if (this->_tree.empty() == 0)
+					return (this->rend());
+				return (reverse_iterator(this->end()));
+			};
+
+			reverse_iterator rend(void){
+				return (reverse_iterator(this->begin()));
+			};
+
+			const_reverse_iterator rend(void) const{
+				return (reverse_iterator(this->begin()));
+			};
 		
 		//Capacity
 			bool		empty() const {
@@ -208,13 +249,23 @@ namespace ft{
 				}
 			};
 
-			// void	erase(iterator pos){};
+			void	erase(iterator pos){
+				this->_tree.remove(pos.base());
+			};
 
-			// void	erase(iterator first, iterator last){};
+			void	erase(iterator first, iterator last){ //do some right
+				iterator	it;
+				std::cout << "last iterator: " << last->second <<std::endl;
+				while (first != last){
+					it = first;
+					first++;
+					this->_tree.remove(it.base());
+				}
+			};
 
 			size_type	erase(const Key& key){
 				//this->_tree.remove(ft::make_pair(key, mapped_type()));
-				return (this->_tree.remove(ft::make_pair(key, mapped_type())));
+				return (this->_tree.remove(this->_tree.find_elem(ft::make_pair(key, mapped_type()))));
 			};
 
 			void	swap(map& other){
@@ -231,8 +282,8 @@ namespace ft{
 
 		//Lookup
 			size_type		count(const Key& key) const{
-				ft::pair<const int, int>	para = ft::make_pair(key, 0);
-				return (this->_tree.check_exist_value(para));
+				// ft::pair<const int, int>	para = ;
+				return (this->_tree.check_exist_value(ft::make_pair(key, mapped_type())));
 			};
 
 			iterator		find(const Key& key){
@@ -253,7 +304,8 @@ namespace ft{
 
 			iterator		lower_bound(const Key& key){
 				for (iterator it = this->begin(); it != this->end(); it++){
-					if (it->first >= key)
+					//if (it->first >= key)
+					if (!_comp(it->first, key))
 						return (it);
 				}
 				return (this->end());
@@ -261,7 +313,8 @@ namespace ft{
 
 			const_iterator	lower_bound(const Key& key) const{
 				for (iterator it = this->begin(); it != this->end(); it++){
-					if (it->first >= key)
+					//if (it->first >= key)
+					if (!_comp(it->first, key))
 						return (it);
 				}
 				return (this->end());
@@ -269,7 +322,8 @@ namespace ft{
 
 			iterator		upper_bound(const Key& key){
 				for (iterator it = this->begin(); it != this->end(); it++){
-					if (it->first > key)
+					//if (it->first > key)
+					if (_comp(key, it->first))
 						return (it);
 				}
 				return (this->end());
@@ -277,7 +331,8 @@ namespace ft{
 
 			const_iterator	upper_bound(const Key& key) const{
 				for (iterator it = this->begin(); it != this->end(); it++){
-					if (it->first > key)
+					// if (it->first > key)
+					if (_comp(key, it->first))
 						return (it);
 				}
 				return (this->end());
@@ -288,16 +343,23 @@ namespace ft{
 				return (this->_comp);
 			};
 
-			// ft::map::value_compare	value_comp() const{
+			// value_compare	value_comp() const{
 			// 	return (this->_comp::key_value);
 			// };
 
-			void	print(){this->_tree.print_tree(this->_tree.get_root(), 0);};
+			void	print(){
+				std::cout << RESET_COLOR << "tree output:" <<std::endl;
+				if (this->_tree.size() == 0)
+					std::cout << "TREE IS EMPTY" << std::endl;
+				else
+					this->_tree.print_tree(this->_tree.get_root(), 0);
+				std::cout << RESET_COLOR << "end output." <<std::endl;
+			};
 
 		private:
 			ft::RBTree<value_type, key_compare>	_tree;
 			allocator_type		_alloc;
-			key_compare			_comp;
+			Compare				_comp;
 			//typename ft::RBTree<value_type>::node_type_pointer	_end;
 	};
 

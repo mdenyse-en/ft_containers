@@ -26,6 +26,8 @@ namespace ft{
 			RBTNode(const RBTNode& other): _key(other._key), _color(other._color), _parent(other._parent), _left(nullptr), _right(nullptr) {};
 	};
 
+
+//////// RED-BLACK TREE
 	template<class T, class Compare = ft::less<T>, class Node = ft::RBTNode<T>, class Allocator = std::allocator<Node> >
 	class RBTree{
 		public:
@@ -44,8 +46,9 @@ namespace ft{
 		public:
 			RBTree(Compare comp = Compare(), Allocator alloc = Allocator()): _comp(comp), _alloc(alloc){
 				this->_end = _alloc.allocate(1);
-				_alloc.construct(this->_end, node_type(key_type(), black, nullptr));
+				_alloc.construct(this->_end, node_type(key_type(), black, nullptr)); //root /nullptr
 				this->_root = this->_end;
+				this->_end->_parent = this->_root;
 			};
 			~RBTree(void){
 				//std::cout << "deleted tree" << std::endl;
@@ -61,13 +64,18 @@ namespace ft{
 				this->_comp = other._comp;
 				this->_alloc = other._alloc;
 				this->_end = this->_alloc.allocate(1);
-				this->_alloc.construct(this->_end, node_type(key_type(), black, nullptr));
+				this->_alloc.construct(this->_end, node_type(key_type(), black, nullptr)); //root /nullptr
 				this->_root = this->_end;
 				if (!other.empty())
 					this->copy_tree(&(this->_root), other._root, nullptr);
-
+				this->_end->_parent = this->_root;
 				return (*this);
 			}
+
+			// void	copy(node_type_pointer* this_cur, node_type_pointer other_cur, node_type_pointer parent){
+			// 	this->copy_tree(this_cur, other_cur, parent);
+				
+			// }
 
 			void	copy_tree(node_type_pointer* this_cur, node_type_pointer other_cur, node_type_pointer parent){
 				if (other_cur == nullptr)
@@ -77,17 +85,6 @@ namespace ft{
 				this->_alloc.construct(*this_cur, node_type(*other_cur));
 				(*this_cur)->_parent = parent;
 				
-
-				//std::cout << "_____" << (*this_cur)->_key.second << std::endl;
-
-				//*this_cur->_parent = parent;
-
-				// if (parent != nullptr){
-				// 	if (parent->_key < this_cur._key)
-				// 		parent->_left = this_cur;
-				// 	else
-				// 		parent->_right = this_cur;
-				// }
 				if ((other_cur)->_left != nullptr){
 					this->copy_tree(&((*this_cur)->_left), other_cur->_left, *this_cur);
 				}
@@ -114,13 +111,16 @@ namespace ft{
 			void	clear(){
 				this->delete_elems(this->_root);
 				this->_root = this->_end;
+				// this->_end->_parent = this->_root; //dont need i guess
 			}
 
+		//insert element
 			node_type_pointer	insert(T key){
+				//std::cout << "inserting: " << key.first << std::endl;
 				if (this->_root == this->_end){
 					//this->_root = new node_type(key, red);
 					this->_root = _alloc.allocate(1);
-					_alloc.construct(this->_root, node_type(key, red));
+					_alloc.construct(this->_root, node_type(key, black));
 					this->_end->_parent = this->_root;
 					// _alloc.construct(this->_end, node_type(T(), black, this->_root));
 					return (this->_root);
@@ -132,6 +132,8 @@ namespace ft{
 						if (tmp->_left == nullptr){
 							tmp->_left = _alloc.allocate(1);
 							_alloc.construct(tmp->_left, node_type(key, red, tmp));
+							this->insert_fix(tmp->_left);
+							this->_end->_parent = this->_root; // maybe was change after fix
 							return (tmp->_left);
 						}
 						else
@@ -141,6 +143,8 @@ namespace ft{
 						if (tmp->_right == nullptr){
 							tmp->_right = _alloc.allocate(1);
 							_alloc.construct(tmp->_right, node_type(key, red, tmp));
+							this->insert_fix(tmp->_right);
+							this->_end->_parent = this->_root; // maybe was change after fix
 							return (tmp->_right);
 						}
 						else
@@ -149,6 +153,70 @@ namespace ft{
 				}
 				return (this->_end);
 			};
+
+		//do the balance after insert
+			void	insert_fix(node_type_pointer cur){
+				// node_type_pointer	parent = cur->_parent;
+				// node_type_pointer	uncle = this->get_uncle(cur);
+
+				// if (parent->_color == black){
+				// 	return ;
+				// }
+				// else 
+
+				while (cur != this->_root && cur->_parent->_color == red){
+					if (cur->_parent == cur->_parent->_parent->_left){
+						node_type_pointer	uncle = cur->_parent->_parent->_right;
+						if (uncle != nullptr && uncle->_color == red){
+							cur->_parent->_color = black;
+							uncle->_color = black;
+							cur->_parent->_parent->_color = red;
+							cur = cur->_parent->_parent;
+						} else {
+							if (cur == cur->_parent->_right){
+								cur = cur->_parent;
+								this->rotate_left(cur);
+							}
+							cur->_parent->_color = black;
+							cur->_parent->_parent->_color = red;
+							this->rotate_right(cur->_parent->_parent);
+						}
+					} else {
+						node_type_pointer	uncle = cur->_parent->_parent->_left;
+						if (uncle != nullptr && uncle->_color == red){
+							cur->_parent->_color = black;
+							uncle->_color = black;
+							cur->_parent->_parent->_color = red;
+							cur = cur->_parent->_parent;
+						} else {
+							if (cur == cur->_parent->_left){
+								cur = cur->_parent;
+								this->rotate_right(cur);
+							}
+							cur->_parent->_color = black;
+							cur->_parent->_parent->_color = red;
+							this->rotate_left(cur->_parent->_parent);
+						}
+					}
+				}
+				this->_root->_color = black;
+			}
+
+			node_type_pointer	get_grandf(node_type_pointer cur){
+				if (cur != nullptr && cur->_parent != nullptr)
+					return (cur->_parent->_parent);
+				return (nullptr);
+			}
+
+			node_type_pointer	get_uncle(node_type_pointer cur){
+				node_type_pointer	grand = this->get_grandf(cur);
+
+				if (grand == nullptr)
+					return (nullptr);
+				if (grand->_left == cur->_parent)
+					return (grand->_right);
+				return (grand->_legt);
+			}
 
 			void	replace(T key){
 				node_type_pointer	tmp = this->_root;
@@ -192,38 +260,236 @@ namespace ft{
 				return (0);
 			}
 
-			size_t	remove(T key){
-				if (this->empty())
+
+	//remove elements
+/*
+			size_t	remove(node_type_pointer tmp){
+				if (this->empty() || tmp == nullptr)
 					return (0);
-				node_type_pointer	tmp = find_elem(key);
-				if (tmp == this->_root){
+
+			//if left and right elements of deleted element are NULL
+				if (tmp->_left == nullptr && tmp->_right == nullptr){
+					if (tmp->_parent != nullptr && tmp->_parent->_left == tmp){
+						tmp->_parent->_left = nullptr;
+					} else if (tmp->_parent != nullptr && tmp->_parent->_right == tmp){
+						tmp->_parent->_right = nullptr;
+					} else if (tmp->_parent == nullptr){
+						this->_root = this->_end;
+					}
 					this->_alloc.destroy(tmp);
 					this->_alloc.deallocate(tmp, 1);
-					this->_root = this->_end;
-					//this->_end->_parent = nullptr;
 					return (1);
 				}
 
-				if (tmp->_left == nullptr && tmp->_right == nullptr){
+				ft::RBT_color	color;
+				if (tmp->_left == nullptr){
 					if (tmp->_parent && tmp->_parent->_left == tmp){
-						tmp->_parent->_left = nullptr;
-						this->_alloc.destroy(tmp);
-						this->_alloc.deallocate(tmp, 1);
-						return (1);
+						tmp->_right->_color = color;
+						tmp->_parent->_left = tmp->_right;
+						
 					}
 					else if (tmp->_parent && tmp->_parent->_right == tmp){
-						tmp->_parent->_right = nullptr;
-						this->_alloc.destroy(tmp);
-						this->_alloc.deallocate(tmp, 1);
-						return (1);
+						tmp->_right->_color = color;
+						tmp->_parent->_right = tmp->_right;
 					}
+					else {
+						this->_root = tmp->_right;
+						
+					}
+					
+					if (tmp->_right != nullptr)
+							tmp->_right->_parent = nullptr;
+
+
+					this->_alloc.destroy(tmp);
+					this->_alloc.deallocate(tmp, 1);
+					return (1);
+				}
+				else if (tmp->_right == nullptr){
+					if (tmp->_parent && tmp->_parent->_left == tmp){
+						tmp->_left->_color = color;
+						tmp->_parent->_left = tmp->_left;
+						tmp->_left->_parent = tmp->_parent;
+					}
+					else if (tmp->_parent && tmp->_parent->_right == tmp){
+						tmp->_left->_color = color;
+						tmp->_parent->_right = tmp->_left;
+						tmp->_left->_parent = tmp->_parent;
+					}
+					else {
+						this->_root = tmp->_left;
+						tmp->_left->_parent = nullptr;
+					}
+					this->_alloc.destroy(tmp);
+					this->_alloc.deallocate(tmp, 1);
+					return (1);
+				}
+				else { //both childs are not NULL
+					node_type_pointer	repl = tmp->_right;
+					while (repl->_left != nullptr)
+						repl = repl->_left;
+					if (repl->_parent != tmp){
+						repl->_parent->_left = repl->_right; //to don't lost right member of min right child
+						repl->_right = tmp->_right;
+					}
+					repl->_left = tmp->_left;
+
+					if (tmp->_left != nullptr)
+						tmp->_left->_parent = repl;
+					repl->_parent = tmp->_parent;
+					
+
+					if (tmp->_parent != nullptr && tmp->_parent->_left == tmp){
+						tmp->_parent->_left = repl;
+					}
+					else if (tmp->_parent != nullptr && tmp->_parent->_right == tmp){
+						tmp->_parent->_right = repl;
+					}
+					else {
+						this->_root = repl;
+					}
+					repl->_color = color;
+					this->_alloc.destroy(tmp);
+					this->_alloc.deallocate(tmp, 1);
+					return (1);
 				}
 
-				// if (tmp->left == nullptr && tmp == tmp->_parent->_right){
-				// 	tmp->_parent->_right = 
-				// }
-
 				return (0);
+			}
+*/
+			size_t	remove(node_type_pointer tmp){
+				if (this->empty() || tmp == this->_end)
+					return (0);
+
+				node_type_pointer	child, parent;
+				ft::RBT_color	color;
+
+				if (tmp->_left != nullptr && tmp->_right != nullptr){//both childs are not NULL
+					node_type_pointer	repl = tmp->_right;
+					while (repl->_left != nullptr)
+						repl = repl->_left;
+					if (tmp->_parent != nullptr){
+						if (tmp->_parent->_left == tmp)
+							tmp->_parent->_left = repl;
+						else
+							tmp->_parent->_right = repl;
+					}
+					else
+						this->_root = repl;
+					color = repl->_color;
+					parent = repl->_parent;
+					child = repl->_right;
+
+					if (parent == tmp){
+						parent = repl;
+					}
+					else {
+						if (child != nullptr)
+							child->_parent = repl->_parent;
+						parent->_left = child;
+						repl->_right = tmp->_right;
+						tmp->_right->_parent = repl;
+					}
+					repl->_parent = tmp->_parent;
+					repl->_left = tmp->_left;
+					tmp->_left->_parent = repl;
+					repl->_color = tmp->_color;
+
+					if (color == black && child != nullptr && parent != nullptr){
+						remove_fix(child, parent);
+					}
+					this->_end->_parent = this->_root; // maybe was change after fix
+					this->_alloc.destroy(tmp);
+					this->_alloc.deallocate(tmp, 1);
+					return (1);
+				}
+
+				if (tmp->_left != nullptr)
+					child = tmp->_left;
+				else
+					child = tmp->_right;	
+				parent = tmp->_parent;
+				color = tmp->_color;
+				if (child != nullptr)
+					child->_parent = parent;
+				if (parent != nullptr){
+					if (parent->_left == tmp)
+						parent->_left = child;
+					else
+						parent->_right = child;
+				}
+				else
+					this->_root = child;
+				if (this->_root == nullptr)
+					this->_root = this->_end;
+				if (color == black && child != nullptr && parent != nullptr){
+					remove_fix(child, parent);
+				}
+				this->_end->_parent = this->_root; // maybe was change after fix
+				this->_alloc.destroy(tmp);
+				this->_alloc.deallocate(tmp, 1);
+				return (1);	
+			}
+
+	//do balance after remove
+			void	remove_fix(node_type_pointer child, node_type_pointer parent){
+				node_type_pointer	tmp;
+
+				while ((!child) || child->_color == black && child != this->_root){
+					if (parent->_left == child){
+						tmp = parent->_right;
+						if (tmp->_color == red){
+							tmp->_color = black;
+							parent->_color = red;
+							this->rotate_left(parent);
+							tmp = parent->_right;
+						}
+						else {
+							if (!(tmp->_right) || tmp->_right->_color == black){
+								tmp->_left->_color = black;
+								tmp->_color = red;
+								this->rotate_right(tmp);
+								tmp = parent->_right;
+							}
+							tmp->_color = parent->_color;
+							parent->_color = black;
+							tmp->_right->_color = black;
+							this->rotate_left(parent);
+							child = this->_root;
+							break;
+						}
+					}
+					else {
+						tmp = parent->_left;
+						if (tmp->_color == red){
+							tmp->_color = black;
+							parent->_color = red;
+							this->rotate_right(parent);
+							tmp = parent->_left;
+						}
+						if ((!tmp->_left || tmp->_left->_color == black) && (!tmp->_right || tmp->_right->_color == black)){
+							tmp->_color = red;
+							child = parent;
+							parent = child->_parent;
+						}
+						else {
+							if (!(tmp->_left) || tmp->_left->_color == black){
+								tmp->_right->_color = black;
+								tmp->_color = red;
+								this->rotate_left(tmp);
+								tmp = parent->_left;
+							}
+							tmp->_color = parent->_color;
+							parent->_color = black;
+							tmp->_left->_color = black;
+							this->rotate_right(parent);
+							child = this->_root;
+							break;
+						}
+					}
+				}
+				if (child)
+					child->_color = black;
 			}
 
 			node_type_pointer	min_elem() const{
@@ -295,6 +561,8 @@ namespace ft{
 			void	print_tree(node_type_pointer tmp, size_t n){
 				if (tmp == nullptr)
 					return ;
+			//	std::cout << "here " << tmp->_key.second << std::endl;
+
 				int	m = n;
 				print_tree(tmp->_right, n + 3);
 				while (m-- > 0)
@@ -346,6 +614,54 @@ namespace ft{
 					return (key);
 			}
 
+		//rotate
+			void	rotate_left(node_type_pointer n){
+				node_type_pointer	tmp = n->_right;
+
+				//std::cout << "left_rotate: " << n->_key.second << std::endl;
+
+				tmp->_parent = n->_parent;
+				if (n->_parent != nullptr){
+					if (n == n->_parent->_left){
+						tmp->_parent->_left = tmp;
+					} else {
+						tmp->_parent->_right = tmp;
+					}
+				} else {
+					this->_root = tmp;
+				}
+
+				n->_right = tmp->_left;
+				if (tmp->_left != nullptr)
+					tmp->_left->_parent = n;
+				
+				n->_parent = tmp;
+				tmp->_left = n;
+			};
+
+			void	rotate_right(node_type_pointer n){
+				node_type_pointer	tmp = n->_left;
+
+				//std::cout << "right_rotate: " << n->_key.second << std::endl;
+				tmp->_parent = n->_parent;
+				if (n->_parent != nullptr){
+					if (n == n->_parent->_left){
+						tmp->_parent->_left = tmp;
+					} else {
+						tmp->_parent->_right = tmp;
+					}
+				} else {
+					this->_root = tmp;
+				}
+
+				n->_left = tmp->_right;
+				if (tmp->_right != nullptr)
+					tmp->_right->_parent = n;
+				
+
+				n->_parent = tmp;
+				tmp->_right = n;
+			};
 	};
 
 }

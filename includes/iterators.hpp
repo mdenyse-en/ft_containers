@@ -109,6 +109,15 @@ namespace ft{
 		typedef	typename	std::random_access_iterator_tag	iterator_category;
 	};
 
+	// template<class T>
+	// struct iterator_traits<const T>{
+	// 	typedef	typename	std::ptrdiff_t		difference_type;
+	// 	typedef	T								value_type;
+	// 	typedef	const T*						pointer;
+	// 	typedef	const T&						reference;
+	// 	typedef	typename	std::random_access_iterator_tag	iterator_category;
+	// };
+
 //VECTOR_ITERATOR
 	template<class T>
 	class vector_iterator{
@@ -297,11 +306,7 @@ namespace ft{
 
 			map_iterator&	operator++(void){
 				pointer tmp = this->_head;
-				//std::cout << "++" << tmp->_key.second << std::endl;
-				// if (this->_head->_right == nullptr){
-				// 	this->_head = this->_end;
-				// 	return (*this);
-				// }
+
 				if (tmp->_right == nullptr && tmp->_parent == nullptr){
 					this->_head = this->_end;
 					return (*this);
@@ -318,8 +323,6 @@ namespace ft{
 							this->_head = tmp->_parent;
 							return (*this);
 						}
-						// this->_head = tmp->_parent;
-						// return (*this);
 					}
 					else {
 						this->_head = tmp->_parent;
@@ -341,13 +344,58 @@ namespace ft{
 				return (tmp);
 			}
 
+
+		/*	map_iterator&	operator++(void){
+				pointer tmp = this->_head;
+
+				if (tmp == this->_end){
+					tmp = tmp->_parent;
+					while (tmp->_right != nullptr)
+						tmp = tmp->_right;
+					this->_head = tmp;
+					return (*this);
+				}
+
+				if (tmp->_left == nullptr && tmp->_parent == nullptr){
+					this->_head = this->_end;
+					return (*this);
+				}
+				else if ((tmp->_right == nullptr) && (tmp->_parent != nullptr)){
+					if (tmp == tmp->_parent->_right){
+						while (tmp->_parent && tmp == tmp->_parent->_right)
+							tmp = tmp->_parent;
+						if (tmp->_parent == nullptr){
+							this->_head = this->_end;
+							return (*this);
+						}
+						else{
+							this->_head = tmp->_parent;
+							return (*this);
+						}
+					}
+					else {
+						this->_head = tmp->_parent;
+						return (*this);
+					}
+				} else if ((tmp->_right != nullptr)){
+					tmp = tmp->_right;
+					while (tmp->_left)
+						tmp = tmp->_left;
+					this->_head = tmp;
+					return (*this);
+				}
+				return (*this);
+			}*/
 			map_iterator&	operator--(void){
 				pointer tmp = this->_head;
-			//	std::cout << "--" << tmp->_key.second << std::endl;
+				//std::cout << "--" << tmp->_key.second << std::endl;
 				//std::cout << "-p-" << tmp << " " << this->_end << std::endl;
 
 				if (tmp == this->_end){
 					tmp = tmp->_parent;
+					if (tmp == this->_end){
+						return (*this);
+					}
 					while (tmp->_right != nullptr)
 						tmp = tmp->_right;
 					this->_head = tmp;
@@ -409,7 +457,7 @@ namespace ft{
 			map_iterator		operator-(difference_type n){
 				while (n-- > 0)
 					--(*this);
-				return (map_iterator(this->_head));
+				return (*this);
 			}
 
 			map_iterator&	operator+=(difference_type n){

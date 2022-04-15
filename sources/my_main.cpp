@@ -482,6 +482,11 @@ int	main(int argc, char** argv){
 	std::cout << STD_PR_COLOR << "STD Vector create by count: " << vec_std.capacity() << ", " << vec_std.size() << std::endl;
 	std::cout <<  FT_PR_COLOR << " FT Vector create by count: " << vec_ft.capacity() << ", " << vec_ft.size() << std::endl;
 
+// 	std::vector<int>::const_iterator	it_vec_std_const = vec_std.begin();
+// 	it_vec_std_const++;
+// 	std::cout << *it_vec_std_const << std::endl;
+// *it_vec_std_const = 4;
+
 	//ft::vector<int>::const_iterator	it_vec_ft_const = vec_ft.begin();
 
 
@@ -517,11 +522,22 @@ int	main(int argc, char** argv){
 
 	map_ft.insert(ft::make_pair(-11,-11));
 	map_ft.insert(ft::make_pair(11, 11));
+	map_ft.print();
 	map_ft.insert(ft::make_pair(5, 5));
+	map_ft.print();
+
 	map_ft.insert(ft::make_pair(3, 3));
+	map_ft.print();
+
 	map_ft.insert(ft::make_pair(7, 7));
+	map_ft.print();
+
 	map_ft.insert(ft::make_pair(18, 18));
+	map_ft.print();
+
 	map_ft.insert(ft::make_pair(18, 10));
+	map_ft.print();
+
 //	map_ft.insert(ft::make_pair(7, 7));
 
 	print_maps(map_std, map_ft);
@@ -651,11 +667,35 @@ std::cout <<	map_std2.erase(-11) << std::endl;
 std::cout <<	map_ft2.erase(-11)  << std::endl;
 std::cout <<	map_ft2.erase(-11) << std::endl;
 
-	map_ft2[30];
-	map_ft2[33] = 33;
 
+	// map_std2[30] = 30;
+	// map_std2[33] = 33;
+	// map_std2[35] = 35;
+
+	map_ft2[30] = 30;
+	map_ft2[33] = 33;
+	map_ft2[35] = 35;
+
+	map_std2.erase(33);
+	map_std2.erase(35);
+
+
+map_ft2.print();
 	map_ft2.erase(33);
+
+map_ft2.print();
 	map_ft2.erase(30);
+
+map_ft2.print();
+	map_ft2.erase(35);
+
+map_ft2.print();
+
+
+
+	print_maps(map_std2, map_ft2);
+
+
 
 	std::cout << STD_PR_COLOR << "STD map END() == another STD map END(): " << &(*map_std2.begin()) << " " << &(*map_std2.end()) << std::endl;
 	std::cout <<  FT_PR_COLOR << " FT map END() == another STD map END(): " << &(*map_ft2.begin()) << " " << &(*map_ft2.end())  << std::endl;
@@ -686,17 +726,16 @@ std::cout <<	map_ft2.erase(-11) << std::endl;
 		std::cout << STD_PR_COLOR << "STD map AT(" << -20 << "): " << map_std.at(-20) << std::endl;
 	}
 	catch (std::exception& ex){
-		std::cout << ex.what() << std::endl;
+		std::cout << STD_PR_COLOR << ex.what() << std::endl;
 	}
 
 	try{
-		std::cout << STD_PR_COLOR << " FT map AT(" << -20 << "): " << map_ft.at(-20) << std::endl;
+		std::cout << FT_PR_COLOR << " FT map AT(" << -20 << "): " << map_ft.at(-20) << std::endl;
 	}
 	catch (std::exception& ex){
-		std::cout << ex.what() << std::endl;
+		std::cout << FT_PR_COLOR << ex.what() << std::endl;
 	}
 
-	std::cout << "tree output:" << std::endl;
 	map_ft.print();
 
 	print_maps(map_std, map_ft);
@@ -783,5 +822,64 @@ std::cout <<	map_ft2.erase(-11) << std::endl;
 	// std::cout <<  FT_PR_COLOR << " FT const_iterator BEGIN(): " << it_map_ft_const->second << std::endl;
 
 
-	while(1);
+	// map_ft[16] = 16;
+	// map_ft[19] = 19;
+	// map_ft[-4] = 4;
+	// map_ft[23] = 23;
+	// map_ft[64] = 64;
+	// map_ft[55] = 55;
+	// map_ft[-3] = -3;
+	// map_ft[48] = 48;
+	// map_ft[-7] = -7;
+	// map_ft[-22] = -22;
+	// map_ft[-33] = 33;
+	// map_ft[96] = 96;
+	// map_ft[88] = 88;
+	// map_ft[42] = 42;
+
+
+//	map_ft.try_leftrotate(11);
+
+
+	// ft::map<int, int>::iterator	it_map_ft2 = map_ft.end();
+
+	// std::map<int, int>::reverse_iterator	it_map_std2 = map_std.rbegin();
+	ft::map<int, int>::reverse_iterator		it_map_ft2 = map_ft.rbegin();
+
+	// it_map_std2--;
+	// it_map_ft2--;
+
+	// std::cout << STD_PR_COLOR << "STD revers iterator REND()-- = " << it_map_std2->second << std::endl;
+	// std::cout << FT_PR_COLOR << "STD revers iterator REND()-- = " << it_map_ft2->second << std::endl;
+
+	// ft::map<int, int>	ft_map3(map_ft.begin(), map_ft.end());
+	// ft_map3.print();
+
+	map_ft.erase(map_ft.begin(), --map_ft.end());
+	
+	// map_ft.erase(5);
+	// map_ft.erase(18);
+	// map_ft.erase(28);
+	// map_ft.erase(9);
+	// map_ft.erase(3);
+	// map_ft.erase(4);
+	// map_ft.erase(6);
+	// map_ft.erase(11);
+	// map_ft.erase(7);
+	// map_ft.erase(map_ft.begin());
+
+	// map_ft.erase(15);
+	// map_ft.erase(map_ft.begin());
+	// map_ft.erase(-11);
+
+//	map_ft.erase(3);
+
+
+
+	map_ft.print();
+	std::cout << map_ft.size() << std::endl;
+
+//	print_maps(map_std, map_ft);
+
+	//while(1);
 }
