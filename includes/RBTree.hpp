@@ -27,6 +27,215 @@ namespace ft{
 	};
 
 
+//RBTree iterator //////////////////////////////////////////////////////////
+	template<class T, class Node = RBTNode<T> >
+	class RBTree_iterator{
+		private:
+			typedef ft::iterator_traits<T*>	_traits_type;
+
+		public:
+			typedef typename _traits_type::difference_type		difference_type;
+			typedef typename _traits_type::value_type			value_type;
+			typedef typename _traits_type::pointer				pointer;
+			typedef typename _traits_type::reference			reference;
+			typedef typename _traits_type::iterator_category	iterator_category;
+			typedef T									key_value;
+			typedef Node								node_type;
+			typedef Node*								node_type_pointer;
+
+		private:
+			node_type_pointer	_head;
+			node_type_pointer	_end;
+		
+
+		public:
+
+			RBTree_iterator(void): _head(), _end(){
+			//	this->_head = nullptr;
+
+			}
+
+			RBTree_iterator(node_type_pointer p, node_type_pointer end): _head(p), _end(end){
+			//	this->_head = p;
+			}
+
+		//	RBTree_iterator(const RBTree_iterator& copy){
+			RBTree_iterator(const RBTree_iterator<typename ft::remove_const<value_type>::type > copy): _head(copy.base()){
+			//	*this = copy;
+			}
+
+			~RBTree_iterator(){};
+
+			RBTree_iterator&	operator=(const RBTree_iterator& it){
+				if (&it != this)
+				{
+					this->_head = it._head;
+					this->_end = it._end;
+				}
+				return (*this);
+			}
+
+			node_type_pointer	base(void) const{
+				return (this->_head);
+			}
+
+			key_value&	operator*(void){
+				return (this->_head->_key);
+			}
+
+			const key_value&	operator*(void) const{
+				return (this->_head->_key);
+			}
+
+			key_value*		operator->(void){
+				//return &(*(this->_head)); //is diference with this?:
+				return &(this->_head->_key);
+			}
+
+			const key_value*		operator->(void) const{
+				//return &(*(this->_head)); //is diference with this?:
+				return &(this->_head->_key);
+			}
+
+			RBTree_iterator&	operator++(void){
+				node_type_pointer tmp = this->_head;
+
+				if (tmp->_right == nullptr && tmp->_parent == nullptr){
+					this->_head = this->_end;
+					return (*this);
+				}
+				else if ((tmp->_right == nullptr) && (tmp->_parent != nullptr)){
+					if (tmp == tmp->_parent->_right){
+						while (tmp->_parent && tmp == tmp->_parent->_right)
+							tmp = tmp->_parent;
+						if (tmp->_parent == nullptr){
+							this->_head = this->_end;
+							return (*this);
+						}
+						else{
+							this->_head = tmp->_parent;
+							return (*this);
+						}
+					}
+					else {
+						this->_head = tmp->_parent;
+						return (*this);
+					}
+				} else if ((tmp->_right != nullptr)){
+					tmp = tmp->_right;
+					while (tmp->_left)
+						tmp = tmp->_left;
+					this->_head = tmp;
+					return (*this);
+				}
+				return (*this);
+			}
+
+			RBTree_iterator	operator++(int){
+				RBTree_iterator	tmp = *this;
+				++(*this);
+				return (tmp);
+			}
+
+			RBTree_iterator&	operator--(void){
+				node_type_pointer tmp = this->_head;
+				if (tmp == this->_end){
+					tmp = tmp->_parent;
+					if (tmp == this->_end){
+						return (*this);
+					}
+					while (tmp->_right != nullptr)
+						tmp = tmp->_right;
+					this->_head = tmp;
+					return (*this);
+				}
+				if (tmp->_left == nullptr && tmp->_parent == nullptr){
+					this->_head = this->_end;
+					return (*this);
+				}
+				else if ((tmp->_left == nullptr) && (tmp->_parent != nullptr)){
+					if (tmp == tmp->_parent->_left){
+						if (tmp->_parent->_parent != nullptr){
+							while (tmp->_parent != nullptr && tmp != tmp->_parent->_right)
+								tmp = tmp->_parent;
+							if (tmp->_parent == nullptr){
+								this->_head = this->_end;
+								return (*this);
+							}
+							else {
+								this->_head = tmp->_parent;
+								return(*this);
+							}
+						}
+						else
+							this->_head = this->_end;
+						return (*this);
+					}
+					else {
+						this->_head = tmp->_parent;
+						return (*this);
+					}
+				} else if ((tmp->_left != nullptr)){
+					tmp = tmp->_left;
+					while (tmp->_right != nullptr)
+						tmp = tmp->_right;
+					this->_head = tmp;
+					return (*this);
+				}
+				return (*this);
+			}
+
+			RBTree_iterator	operator--(int){
+				RBTree_iterator	tmp = *this;
+				--(*this);
+				return (tmp);
+			}
+
+			RBTree_iterator		operator+(difference_type n){
+				while (n-- > 0)
+					++(*this);
+				return (*this);
+			}
+
+			RBTree_iterator		operator-(difference_type n){
+				while (n-- > 0)
+					--(*this);
+				return (*this);
+			}
+
+		//	pointer		operator*(const vector_iterator& )
+			// friend bool	operator==(const RBTree_iterator& lhs, const RBTree_iterator& rhs)
+			// {return (lhs.base() == rhs.base());};
+
+			// template<class Iter1, class Iter2>
+			// friend bool	operator!=(const RBTree_iterator& lhs, const RBTree_iterator& rhs)
+			// {return (lhs.base() != rhs.base());};
+	};
+
+	template<class Iter1, class Iter2>
+	bool	operator==(const ft::RBTree_iterator<Iter1>& lhs, const ft::RBTree_iterator<Iter2>& rhs)
+	{return (lhs.base() == rhs.base());};
+
+	template<class Iter1, class Iter2>
+	bool	operator!=(const ft::RBTree_iterator<Iter1>& lhs, const ft::RBTree_iterator<Iter2>& rhs)
+	{return (lhs.base() != rhs.base());};
+
+	// template<class Iter1, class Iter2>
+	// bool	operator>(const ft::RBTree_iterator<Iter1>& lhs, const ft::RBTree_iterator<Iter2>& rhs)
+	// {return (lhs.base() > rhs.base());};
+
+	// template<class Iter1, class Iter2>
+	// bool	operator>=(const ft::RBTree_iterator<Iter1>& lhs, const ft::RBTree_iterator<Iter2>& rhs)
+	// {return (lhs.base() >= rhs.base());};
+
+	// template<class Iter1, class Iter2>
+	// bool	operator<(const ft::RBTree_iterator<Iter1>& lhs, const ft::RBTree_iterator<Iter2>& rhs)
+	// {return (lhs.base() < rhs.base());};
+
+	// template<class Iter1, class Iter2>
+	// bool	operator<=(const ft::RBTree_iterator<Iter1>& lhs, const ft::RBTree_iterator<Iter2>& rhs)
+	// {return (lhs.base() <= rhs.base());};
+
 //////// RED-BLACK TREE
 	template<class T, class Compare = ft::less<T>, class Node = ft::RBTNode<T>, class Allocator = std::allocator<Node> >
 	class RBTree{
@@ -34,10 +243,13 @@ namespace ft{
 			typedef	T			key_type;
 			typedef	T*			key_pointer;
 			typedef	T&			key_reference;
-			typedef	RBTNode<T>	node_type;
-			typedef	RBTNode<T>*	node_type_pointer;
+			typedef	Node		node_type;
+			typedef	Node*		node_type_pointer;
 
-		public:
+			typedef	ft::RBTree_iterator<T, node_type>			iterator;
+			typedef	ft::RBTree_iterator<const T, node_type>	const_iterator;
+
+		private:
 			node_type_pointer	_root;
 			node_type_pointer	_end;
 			Compare				_comp;
@@ -49,6 +261,9 @@ namespace ft{
 				_alloc.construct(this->_end, node_type(key_type(), black, nullptr)); //root /nullptr
 				this->_root = this->_end;
 				this->_end->_parent = this->_root;
+			};
+			RBTree(const RBTree& other){
+				*this = copy_tree(other);
 			};
 			~RBTree(void){
 				//std::cout << "deleted tree" << std::endl;
@@ -76,6 +291,12 @@ namespace ft{
 			// 	this->copy_tree(this_cur, other_cur, parent);
 				
 			// }
+
+			node_type_pointer	tr_end() const{return (this->_end);}
+			node_type_pointer	tr_begin() const{return (this->_root);}
+
+			void	set_end(const node_type_pointer& other){this->_end = other;}
+			void	set_begin(const node_type_pointer& other){this->_root = other;}
 
 			void	copy_tree(node_type_pointer* this_cur, node_type_pointer other_cur, node_type_pointer parent){
 				if (other_cur == nullptr)
@@ -665,12 +886,19 @@ namespace ft{
 				if (tmp->_right != nullptr)
 					tmp->_right->_parent = n;
 				
-
 				n->_parent = tmp;
 				tmp->_right = n;
 			};
 	};
 
+
+
+
+
+
+
 }
+
+
 
 #endif

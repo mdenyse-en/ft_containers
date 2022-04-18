@@ -4,6 +4,10 @@
 
 namespace ft{
 
+
+	template<class T> struct remove_const { typedef T type; };
+	template<class T> struct remove_const <const T> { typedef T type; };
+
 //LESS
 	template<class Arg1, class Arg2, class Result>
 	struct binary_function{
@@ -118,7 +122,7 @@ namespace ft{
 	// 	typedef	typename	std::random_access_iterator_tag	iterator_category;
 	// };
 
-//VECTOR_ITERATOR
+//VECTOR_ITERATOR //////////////////////////////////////////////////////
 	template<class T>
 	class vector_iterator{
 		private:
@@ -139,8 +143,8 @@ namespace ft{
 				this->_head = p;
 			}
 
-			vector_iterator(const vector_iterator& copy){
-				*this = copy;
+			vector_iterator(const vector_iterator<typename ft::remove_const<value_type>::type >& copy): _head(copy.base()){
+			//	*this = copy;
 			}
 
 			~vector_iterator(){};
@@ -242,8 +246,8 @@ namespace ft{
 	bool	operator<=(const ft::vector_iterator<Iter1>& lhs, const ft::vector_iterator<Iter2>& rhs)
 	{return (lhs.base() <= rhs.base());};
 
-
-//MAP iterator
+/*
+//MAP iterator //////////////////////////////////////////////////////////
 	template<class T, class Compare = std::less<T> >
 	class map_iterator{
 		private:
@@ -266,8 +270,9 @@ namespace ft{
 			//	this->_head = p;
 			}
 
-			map_iterator(const map_iterator& copy){
-				*this = copy;
+		//	map_iterator(const map_iterator& copy){
+			map_iterator(const map_iterator<typename ft::remove_const<value_type>::type > copy): _head(copy.base()){
+			//	*this = copy;
 			}
 
 			~map_iterator(){};
@@ -345,47 +350,47 @@ namespace ft{
 			}
 
 
-		/*	map_iterator&	operator++(void){
-				pointer tmp = this->_head;
+			// map_iterator&	operator++(void){
+			// 	pointer tmp = this->_head;
 
-				if (tmp == this->_end){
-					tmp = tmp->_parent;
-					while (tmp->_right != nullptr)
-						tmp = tmp->_right;
-					this->_head = tmp;
-					return (*this);
-				}
+			// 	if (tmp == this->_end){
+			// 		tmp = tmp->_parent;
+			// 		while (tmp->_right != nullptr)
+			// 			tmp = tmp->_right;
+			// 		this->_head = tmp;
+			// 		return (*this);
+			// 	}
 
-				if (tmp->_left == nullptr && tmp->_parent == nullptr){
-					this->_head = this->_end;
-					return (*this);
-				}
-				else if ((tmp->_right == nullptr) && (tmp->_parent != nullptr)){
-					if (tmp == tmp->_parent->_right){
-						while (tmp->_parent && tmp == tmp->_parent->_right)
-							tmp = tmp->_parent;
-						if (tmp->_parent == nullptr){
-							this->_head = this->_end;
-							return (*this);
-						}
-						else{
-							this->_head = tmp->_parent;
-							return (*this);
-						}
-					}
-					else {
-						this->_head = tmp->_parent;
-						return (*this);
-					}
-				} else if ((tmp->_right != nullptr)){
-					tmp = tmp->_right;
-					while (tmp->_left)
-						tmp = tmp->_left;
-					this->_head = tmp;
-					return (*this);
-				}
-				return (*this);
-			}*/
+			// 	if (tmp->_left == nullptr && tmp->_parent == nullptr){
+			// 		this->_head = this->_end;
+			// 		return (*this);
+			// 	}
+			// 	else if ((tmp->_right == nullptr) && (tmp->_parent != nullptr)){
+			// 		if (tmp == tmp->_parent->_right){
+			// 			while (tmp->_parent && tmp == tmp->_parent->_right)
+			// 				tmp = tmp->_parent;
+			// 			if (tmp->_parent == nullptr){
+			// 				this->_head = this->_end;
+			// 				return (*this);
+			// 			}
+			// 			else{
+			// 				this->_head = tmp->_parent;
+			// 				return (*this);
+			// 			}
+			// 		}
+			// 		else {
+			// 			this->_head = tmp->_parent;
+			// 			return (*this);
+			// 		}
+			// 	} else if ((tmp->_right != nullptr)){
+			// 		tmp = tmp->_right;
+			// 		while (tmp->_left)
+			// 			tmp = tmp->_left;
+			// 		this->_head = tmp;
+			// 		return (*this);
+			// 	}
+			// 	return (*this);
+			// }
 			map_iterator&	operator--(void){
 				pointer tmp = this->_head;
 				//std::cout << "--" << tmp->_key.second << std::endl;
@@ -507,10 +512,10 @@ namespace ft{
 	// template<class Iter1, class Iter2>
 	// bool	operator<=(const ft::map_iterator<Iter1>& lhs, const ft::map_iterator<Iter2>& rhs)
 	// {return (lhs.base() <= rhs.base());};
+*/
 
 
-
-//reverse iterator:
+//reverse iterator: /////////////////////////////////////////////////////
 	template<class Iter>
 	class reverse_iterator
 	{
@@ -522,7 +527,10 @@ namespace ft{
 			typedef typename ft::iterator_traits<Iter>::pointer				pointer;
 			typedef typename ft::iterator_traits<Iter>::reference			reference;
 
+		protected:
+			iterator_type	_current;
 
+		public:
 			reverse_iterator(void): _current(){}
 			explicit reverse_iterator(iterator_type x): _current(x){}
 			template <class U>
@@ -537,67 +545,53 @@ namespace ft{
 				return (*this);
 			};
 
-			iterator_type	base(void) const
-			{
+			iterator_type	base(void) const{
 				return (this->_current);
 			}
 
-			reference	operator*(void) const
-			{
+			reference	operator*(void) const{
 				iterator_type	tmp = _current;
 				return (*(--tmp));
 				//return (*(this->_current));
 			}
 
-			pointer		operator->(void) const
-			{
-				//iterator_type	tmp = _current;
-				//return (&(*(--tmp)));
-				//return &(*(this->_current));
+			pointer		operator->(void) const{
 				return (&(operator*()));
 			}
 
-			reference	operator[](difference_type n)
-			{
+			reference	operator[](difference_type n){
 				return (this->base()[-n - 1]);
-				// return (this->_current[-n - 1]);
+				//return *(*(this + n))
 			}
 
-
-			reverse_iterator&	operator++(void)
-			{
+			reverse_iterator&	operator++(void){
 				--(this->_current);
 				return (*this);
 			}
 
-			reverse_iterator&	operator++(int)
-			{
-				reverse_iterator	tmp = this;
+			reverse_iterator	operator++(int){
+				reverse_iterator	tmp(*this);
 				++(*this);
-				return (*tmp);
+				return (tmp);
 			}
 
-			reverse_iterator&	operator+=(difference_type n)
-			{
+			reverse_iterator&	operator+=(difference_type n){
 				this->_current -= n;
 				return (*this);
 			}
 
-			reverse_iterator&	operator--(void)
-			{
+			reverse_iterator&	operator--(void){
 				++(this->_current);
 				return (*this);
 			}
 
-			reverse_iterator&	operator--(int)
-			{
-				reverse_iterator	tmp = this;
+			reverse_iterator	operator--(int){
+				reverse_iterator	tmp(*this);
 				--(*this);
-				return (*tmp);
+				return (tmp);
 			}
 
-			reverse_iterator&	operator-=(difference_type n)
-			{
+			reverse_iterator&	operator-=(difference_type n){
 				this->_current += n;
 				return (*this);
 			}
@@ -607,9 +601,6 @@ namespace ft{
 
 			reverse_iterator	operator-(difference_type n)
 			{return (reverse_iterator(this->base() + n));}
-		
-		protected:
-			iterator_type	_current;
 	};
 
 	template<class Iterator1, class Iterator2>

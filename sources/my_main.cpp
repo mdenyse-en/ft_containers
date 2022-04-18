@@ -338,6 +338,14 @@ int	main(int argc, char** argv){
 	std::cout <<  FT_PR_COLOR << " FT Vector::iterator REND and REND compare == : " << (it_ft4 == it_ft3) << std::endl;
 //
 
+	it_std4--;
+	it_ft4--;
+
+	std::cout << STD_PR_COLOR << "STD Vector::reverse_iterator --REND: " << *it_std4 << std::endl;
+	std::cout <<  FT_PR_COLOR << " FT Vector::reverse_iterator --REND: " << *it_ft4 << std::endl;
+
+		std::cout << STD_PR_COLOR << "STD Vector::reverse_iterator --REND: " << *(--it_std4) << std::endl;
+	std::cout <<  FT_PR_COLOR << " FT Vector::reverse_iterator --REND: " << *(--it_ft4) << std::endl;
 
 	vector_int_std = vector_int_std2;
 	vector_int_ft = vector_int_ft2;
@@ -487,7 +495,30 @@ int	main(int argc, char** argv){
 // 	std::cout << *it_vec_std_const << std::endl;
 // *it_vec_std_const = 4;
 
-	//ft::vector<int>::const_iterator	it_vec_ft_const = vec_ft.begin();
+	print_vectors(vec_std, vec_ft);
+
+	vec_std[0] = -3;
+	vec_ft[0] = -3;
+
+
+	// std::vector<int>::reverse_iterator	it_vec_std_rev = vec_std.rbegin();
+	// std::cout << *(it_vec_std_rev) << std::endl;
+
+	ft::vector<int>::const_iterator	it_vec_ft_const = vec_ft.end();
+	it_vec_ft_const--;
+//	*it_vec_ft_const = 6;
+	std::cout << *(it_vec_ft_const) << std::endl;
+	// ft::vector<int>::reverse_iterator	it_vec_ft_rev = vec_ft.rbegin();
+	// std::cout << *(it_vec_ft_rev) << std::endl;
+
+	std::vector<int>::const_reverse_iterator it_rev_std = vec_std.rbegin();
+	ft::vector<int>::const_reverse_iterator it_rev_ft = vec_ft.rbegin();
+
+	it_rev_std++;
+	it_rev_ft++;
+
+	std::cout << STD_PR_COLOR << "STD Vector::const_reverse_iterator RBEGIN()++ : " << *(it_rev_std) << std::endl;
+	std::cout << FT_PR_COLOR <<  " FT Vector::const_reverse_iterator RBEGIN()++ : " << *(it_rev_ft) << std::endl;
 
 
 
@@ -809,18 +840,21 @@ map_ft2.print();
 	std::cout <<  FT_PR_COLOR << " FT EQUAL_RANGE (15): " << map_ft.equal_range(15).first->second << " - " << map_ft.equal_range(15).second->second << std::endl;
 
 
+
+//CONST_ITERATORS check:
 	std::map<int, int>::const_iterator	it_map_std_const = map_std.begin();
-//	ft::map<int, int>::const_iterator	it_map_ft_const = map_ft.begin();
+	ft::map<int, int>::const_iterator	it_map_ft_const = map_ft.begin();
 
-	// std::cout << STD_PR_COLOR << "STD const_iterator BEGIN(): " << it_map_std_const->second << std::endl;
-	// std::cout <<  FT_PR_COLOR << " FT const_iterator BEGIN(): " << it_map_ft_const->second << std::endl;
+	std::cout << STD_PR_COLOR << "STD const_iterator BEGIN(): " << it_map_std_const->second << std::endl;
+	std::cout <<  FT_PR_COLOR << " FT const_iterator BEGIN(): " << it_map_ft_const->second << std::endl;
 
-	// it_map_std_const++;
-//	it_map_std_const->second = 5;
+	it_map_std_const++;
+	it_map_ft_const++;
 
-	// std::cout << STD_PR_COLOR << "STD const_iterator BEGIN(): " << it_map_std_const->second << std::endl;
-	// std::cout <<  FT_PR_COLOR << " FT const_iterator BEGIN(): " << it_map_ft_const->second << std::endl;
+	std::cout << STD_PR_COLOR << "STD const_iterator BEGIN() after ++: " << it_map_std_const->second << std::endl;
+	std::cout <<  FT_PR_COLOR << " FT const_iterator BEGIN() after ++: " << it_map_ft_const->second << std::endl;
 
+	// it_map_ft_const->second = 3;
 
 	// map_ft[16] = 16;
 	// map_ft[19] = 19;
@@ -843,17 +877,19 @@ map_ft2.print();
 
 	// ft::map<int, int>::iterator	it_map_ft2 = map_ft.end();
 
-	// std::map<int, int>::reverse_iterator	it_map_std2 = map_std.rbegin();
+	std::map<int, int>::reverse_iterator	it_map_std2 = map_std.rbegin();
 	ft::map<int, int>::reverse_iterator		it_map_ft2 = map_ft.rbegin();
 
-	// it_map_std2--;
-	// it_map_ft2--;
+	it_map_std2++;
+	it_map_ft2++;
 
-	// std::cout << STD_PR_COLOR << "STD revers iterator REND()-- = " << it_map_std2->second << std::endl;
-	// std::cout << FT_PR_COLOR << "STD revers iterator REND()-- = " << it_map_ft2->second << std::endl;
+	std::cout << STD_PR_COLOR << "STD revers iterator REND()++ = " << it_map_std2->second << std::endl;
+	std::cout << FT_PR_COLOR << "STD revers iterator REND()++ = " << it_map_ft2->second << std::endl;
 
 	// ft::map<int, int>	ft_map3(map_ft.begin(), map_ft.end());
 	// ft_map3.print();
+
+
 
 	map_ft.erase(map_ft.begin(), --map_ft.end());
 	
