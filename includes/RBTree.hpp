@@ -1,6 +1,9 @@
 #ifndef RBTREE_HPP
 #define RBTREE_HPP
 
+#include "iterators.hpp"
+#include <iostream>
+
 #define RED_COLOR "\x1b[31m"
 #define BLACK_COLOR "\x1b[30m"
 #define RESET_COLOR "\x1b[0m"
@@ -47,23 +50,10 @@ namespace ft{
 			node_type_pointer	_head;
 			node_type_pointer	_end;
 		
-
 		public:
-
-			RBTree_iterator(void): _head(), _end(){
-			//	this->_head = nullptr;
-
-			}
-
-			RBTree_iterator(node_type_pointer p, node_type_pointer end): _head(p), _end(end){
-			//	this->_head = p;
-			}
-
-		//	RBTree_iterator(const RBTree_iterator& copy){
-			RBTree_iterator(const RBTree_iterator<typename ft::remove_const<value_type>::type > copy): _head(copy.base()){
-			//	*this = copy;
-			}
-
+			RBTree_iterator(void): _head(), _end(){}
+			RBTree_iterator(node_type_pointer p, node_type_pointer end): _head(p), _end(end){}
+			RBTree_iterator(const RBTree_iterator<typename ft::remove_const<value_type>::type > copy): _head(copy.base()){}
 			~RBTree_iterator(){};
 
 			RBTree_iterator&	operator=(const RBTree_iterator& it){
@@ -203,13 +193,11 @@ namespace ft{
 				return (*this);
 			}
 
-		//	pointer		operator*(const vector_iterator& )
-			// friend bool	operator==(const RBTree_iterator& lhs, const RBTree_iterator& rhs)
-			// {return (lhs.base() == rhs.base());};
+			friend bool	operator==(const RBTree_iterator& lhs, const RBTree_iterator& rhs)
+			{return (lhs.base() == rhs.base());};
 
-			// template<class Iter1, class Iter2>
-			// friend bool	operator!=(const RBTree_iterator& lhs, const RBTree_iterator& rhs)
-			// {return (lhs.base() != rhs.base());};
+			friend bool	operator!=(const RBTree_iterator& lhs, const RBTree_iterator& rhs)
+			{return (lhs.base() != rhs.base());};
 	};
 
 	template<class Iter1, class Iter2>
@@ -220,21 +208,6 @@ namespace ft{
 	bool	operator!=(const ft::RBTree_iterator<Iter1>& lhs, const ft::RBTree_iterator<Iter2>& rhs)
 	{return (lhs.base() != rhs.base());};
 
-	// template<class Iter1, class Iter2>
-	// bool	operator>(const ft::RBTree_iterator<Iter1>& lhs, const ft::RBTree_iterator<Iter2>& rhs)
-	// {return (lhs.base() > rhs.base());};
-
-	// template<class Iter1, class Iter2>
-	// bool	operator>=(const ft::RBTree_iterator<Iter1>& lhs, const ft::RBTree_iterator<Iter2>& rhs)
-	// {return (lhs.base() >= rhs.base());};
-
-	// template<class Iter1, class Iter2>
-	// bool	operator<(const ft::RBTree_iterator<Iter1>& lhs, const ft::RBTree_iterator<Iter2>& rhs)
-	// {return (lhs.base() < rhs.base());};
-
-	// template<class Iter1, class Iter2>
-	// bool	operator<=(const ft::RBTree_iterator<Iter1>& lhs, const ft::RBTree_iterator<Iter2>& rhs)
-	// {return (lhs.base() <= rhs.base());};
 
 //////// RED-BLACK TREE
 	template<class T, class Compare = ft::less<T>, class Node = ft::RBTNode<T>, class Allocator = std::allocator<Node> >
@@ -258,7 +231,7 @@ namespace ft{
 		public:
 			RBTree(const Compare& comp, Allocator alloc = Allocator()): _comp(comp), _alloc(alloc){
 				this->_end = _alloc.allocate(1);
-				_alloc.construct(this->_end, node_type(key_type(), black, nullptr)); //root /nullptr
+				_alloc.construct(this->_end, node_type(key_type(), black, nullptr));
 				this->_root = this->_end;
 				this->_end->_parent = this->_root;
 			};
@@ -266,7 +239,6 @@ namespace ft{
 				*this = copy_tree(other);
 			};
 			~RBTree(void){
-				//std::cout << "deleted tree" << std::endl;
 				this->clear();
 				this->_alloc.destroy(this->_end);
 				this->_alloc.deallocate(this->_end, 1);
@@ -289,7 +261,6 @@ namespace ft{
 
 			// void	copy(node_type_pointer* this_cur, node_type_pointer other_cur, node_type_pointer parent){
 			// 	this->copy_tree(this_cur, other_cur, parent);
-				
 			// }
 
 			node_type_pointer	tr_end() const{return (this->_end);}
@@ -301,11 +272,9 @@ namespace ft{
 			void	copy_tree(node_type_pointer* this_cur, node_type_pointer other_cur, node_type_pointer parent){
 				if (other_cur == nullptr)
 					return ;
-				
 				*this_cur = this->_alloc.allocate(1);
 				this->_alloc.construct(*this_cur, node_type(*other_cur));
 				(*this_cur)->_parent = parent;
-				
 				if ((other_cur)->_left != nullptr){
 					this->copy_tree(&((*this_cur)->_left), other_cur->_left, *this_cur);
 				}
@@ -332,30 +301,25 @@ namespace ft{
 			void	clear(){
 				this->delete_elems(this->_root);
 				this->_root = this->_end;
-				// this->_end->_parent = this->_root; //dont need i guess
 			}
 
 		//insert element
 			node_type_pointer	insert(T key){
-				//std::cout << "inserting: " << key.first << std::endl;
 				if (this->_root == this->_end){
-					//this->_root = new node_type(key, red);
 					this->_root = _alloc.allocate(1);
 					_alloc.construct(this->_root, node_type(key, black));
 					this->_end->_parent = this->_root;
-					// _alloc.construct(this->_end, node_type(T(), black, this->_root));
 					return (this->_root);
 				}
 
 				node_type_pointer	tmp = this->_root;
 				while (tmp){
-					// if (key < tmp->_key)
 					if (_comp(key, tmp->_key)){
 						if (tmp->_left == nullptr){
 							tmp->_left = _alloc.allocate(1);
 							_alloc.construct(tmp->_left, node_type(key, red, tmp));
 							this->insert_fix(tmp->_left);
-							this->_end->_parent = this->_root; // maybe was change after fix
+							this->_end->_parent = this->_root;
 							return (tmp->_left);
 						}
 						else
@@ -366,7 +330,7 @@ namespace ft{
 							tmp->_right = _alloc.allocate(1);
 							_alloc.construct(tmp->_right, node_type(key, red, tmp));
 							this->insert_fix(tmp->_right);
-							this->_end->_parent = this->_root; // maybe was change after fix
+							this->_end->_parent = this->_root;
 							return (tmp->_right);
 						}
 						else
@@ -378,14 +342,6 @@ namespace ft{
 
 		//do the balance after insert
 			void	insert_fix(node_type_pointer cur){
-				// node_type_pointer	parent = cur->_parent;
-				// node_type_pointer	uncle = this->get_uncle(cur);
-
-				// if (parent->_color == black){
-				// 	return ;
-				// }
-				// else 
-
 				while (cur != this->_root && cur->_parent->_color == red){
 					if (cur->_parent == cur->_parent->_parent->_left){
 						node_type_pointer	uncle = cur->_parent->_parent->_right;
@@ -443,22 +399,22 @@ namespace ft{
 			void	replace(T key){
 				node_type_pointer	tmp = this->_root;
 
-				while (_comp(tmp->_key, key) || _comp(key, tmp->_key)){ //(tmp->_key.first != key.first)
-					if (_comp(key, tmp->_key)) //key.first < tmp->_key.first
+				while (_comp(tmp->_key, key) || _comp(key, tmp->_key)){ //(tmp->_key.first != key.first) for map
+					if (_comp(key, tmp->_key)) //key.first < tmp->_key.first for map
 						tmp = tmp->_left;
 					else
 						tmp = tmp->_right;
 				}
-				tmp->_key = key; // tmp->_key.second = key.second;
+				tmp->_key = key; // tmp->_key.second = key.second; for map
 			}
 
-			node_type_pointer	find_elem(T key){ //const?
+			node_type_pointer	find_elem(T key){
 				node_type_pointer	tmp = this->_root;
 				while (tmp){
-					if (_comp(key, tmp->_key)){ //(key.first < tmp->_key.first)
+					if (_comp(key, tmp->_key)){ //(key.first < tmp->_key.first) for map
 						tmp = tmp->_left;
 					}
-					else if (_comp(tmp->_key, key)){ //(tmp->_key.first < key.first)
+					else if (_comp(tmp->_key, key)){ //(tmp->_key.first < key.first) for map
 						tmp = tmp->_right;
 					}
 					else {
@@ -478,113 +434,11 @@ namespace ft{
 						tmp = tmp->_left;
 					else
 						return (1);
-					// if (key.first == tmp->_key.first) //(key.first == tmp->_key.first)
-					// 	return (1);
-					// if (key < tmp->_key) //(key < tmp->_key)
-					// 	tmp = tmp->_left;
-					// else
-					// 	tmp = tmp->_right;
 				}
 				return (0);
 			}
 
-
-	//remove elements
-/*
-			size_t	remove(node_type_pointer tmp){
-				if (this->empty() || tmp == nullptr)
-					return (0);
-
-			//if left and right elements of deleted element are NULL
-				if (tmp->_left == nullptr && tmp->_right == nullptr){
-					if (tmp->_parent != nullptr && tmp->_parent->_left == tmp){
-						tmp->_parent->_left = nullptr;
-					} else if (tmp->_parent != nullptr && tmp->_parent->_right == tmp){
-						tmp->_parent->_right = nullptr;
-					} else if (tmp->_parent == nullptr){
-						this->_root = this->_end;
-					}
-					this->_alloc.destroy(tmp);
-					this->_alloc.deallocate(tmp, 1);
-					return (1);
-				}
-
-				ft::RBT_color	color;
-				if (tmp->_left == nullptr){
-					if (tmp->_parent && tmp->_parent->_left == tmp){
-						tmp->_right->_color = color;
-						tmp->_parent->_left = tmp->_right;
-						
-					}
-					else if (tmp->_parent && tmp->_parent->_right == tmp){
-						tmp->_right->_color = color;
-						tmp->_parent->_right = tmp->_right;
-					}
-					else {
-						this->_root = tmp->_right;
-						
-					}
-					
-					if (tmp->_right != nullptr)
-							tmp->_right->_parent = nullptr;
-
-
-					this->_alloc.destroy(tmp);
-					this->_alloc.deallocate(tmp, 1);
-					return (1);
-				}
-				else if (tmp->_right == nullptr){
-					if (tmp->_parent && tmp->_parent->_left == tmp){
-						tmp->_left->_color = color;
-						tmp->_parent->_left = tmp->_left;
-						tmp->_left->_parent = tmp->_parent;
-					}
-					else if (tmp->_parent && tmp->_parent->_right == tmp){
-						tmp->_left->_color = color;
-						tmp->_parent->_right = tmp->_left;
-						tmp->_left->_parent = tmp->_parent;
-					}
-					else {
-						this->_root = tmp->_left;
-						tmp->_left->_parent = nullptr;
-					}
-					this->_alloc.destroy(tmp);
-					this->_alloc.deallocate(tmp, 1);
-					return (1);
-				}
-				else { //both childs are not NULL
-					node_type_pointer	repl = tmp->_right;
-					while (repl->_left != nullptr)
-						repl = repl->_left;
-					if (repl->_parent != tmp){
-						repl->_parent->_left = repl->_right; //to don't lost right member of min right child
-						repl->_right = tmp->_right;
-					}
-					repl->_left = tmp->_left;
-
-					if (tmp->_left != nullptr)
-						tmp->_left->_parent = repl;
-					repl->_parent = tmp->_parent;
-					
-
-					if (tmp->_parent != nullptr && tmp->_parent->_left == tmp){
-						tmp->_parent->_left = repl;
-					}
-					else if (tmp->_parent != nullptr && tmp->_parent->_right == tmp){
-						tmp->_parent->_right = repl;
-					}
-					else {
-						this->_root = repl;
-					}
-					repl->_color = color;
-					this->_alloc.destroy(tmp);
-					this->_alloc.deallocate(tmp, 1);
-					return (1);
-				}
-
-				return (0);
-			}
-*/
+		//remove elements
 			size_t	remove(node_type_pointer tmp){
 				if (this->empty() || tmp == this->_end)
 					return (0);
@@ -890,12 +744,6 @@ namespace ft{
 				tmp->_right = n;
 			};
 	};
-
-
-
-
-
-
 
 }
 

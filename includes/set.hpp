@@ -1,7 +1,6 @@
 #ifndef SET_HPP
 #define SET_HPP
 
-#include "iterators.hpp"
 #include "RBTree.hpp"
 
 
@@ -327,34 +326,40 @@ namespace ft{
 			//typename ft::RBTree<value_type>::node_type_pointer	_end;
 	};
 
-	template<class Key, class T, class Compare, class Alloc>
+	template<class Key, class Compare, class Alloc>
 	bool	operator==(	const ft::set<Key,Compare, Alloc>& lhs,
 						const ft::set<Key,Compare, Alloc>& rhs)
-	{};
-	template<class Key, class T, class Compare, class Alloc>
+	{return ((lhs.size() == rhs.size()) && ft::equal(lhs.begin(), lhs.end(), rhs.begin()));};
+
+	template<class Key, class Compare, class Alloc>
 	bool	operator!=(	const ft::set<Key,Compare, Alloc>& lhs,
 						const ft::set<Key,Compare, Alloc>& rhs)
-	{};
-	template<class Key, class T, class Compare, class Alloc>
+	{return !(lhs == rhs);};
+
+	template<class Key, class Compare, class Alloc>
 	bool	operator<(	const ft::set<Key,Compare, Alloc>& lhs,
 						const ft::set<Key,Compare, Alloc>& rhs)
-	{};
-	template<class Key, class T, class Compare, class Alloc>
+	{return (ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));};
+
+	template<class Key, class Compare, class Alloc>
 	bool	operator<=(	const ft::set<Key,Compare, Alloc>& lhs,
 						const ft::set<Key,Compare, Alloc>& rhs)
-	{};
-	template<class Key, class T, class Compare, class Alloc>
+	{return (lhs == rhs || lhs < rhs);};
+	
+	template<class Key, class Compare, class Alloc>
 	bool	operator>(	const ft::set<Key,Compare, Alloc>& lhs,
 						const ft::set<Key,Compare, Alloc>& rhs)
-	{};
-	template<class Key, class T, class Compare, class Alloc>
+	{return (rhs < lhs);};
+
+	template<class Key, class Compare, class Alloc>
 	bool	operator>=(	const ft::set<Key,Compare, Alloc>& lhs,
 						const ft::set<Key, Compare, Alloc>& rhs)
-	{};
-	template<class Key, class T, class Compare, class Alloc>
-	void	swap(const ft::set<Key, Compare, Alloc>& lhs,
-				const ft::set<Key, Compare, Alloc>& rhs)
-	{};
+	{return (rhs < lhs || lhs == rhs);};
+
+	template<class Key, class Compare, class Alloc>
+	void	swap(ft::set<Key, Compare, Alloc>& lhs,
+				 ft::set<Key, Compare, Alloc>& rhs)
+	{lhs.swap(rhs);};
 }
 
 #endif

@@ -3,12 +3,7 @@
 #include <string>
 #include <deque>
 #include <set>
-#include <stack>
-#include <vector>
 
-// #include "../includes/stack.hpp"
-// #include "../includes/vector.hpp"
-// #include "../includes/set.hpp"
 #include "../includes/set.hpp"
 
 
@@ -213,10 +208,10 @@ int	main(int argc, char** argv){
 
 	print_sets(set_std2, set_ft2);
 
-std::cout <<	set_std2.erase(-11) << std::endl;
-std::cout <<	set_std2.erase(-11) << std::endl;
-std::cout <<	set_ft2.erase(-11)  << std::endl;
-std::cout <<	set_ft2.erase(-11) << std::endl;
+	std::cout <<	set_std2.erase(-11) << std::endl;
+	std::cout <<	set_std2.erase(-11) << std::endl;
+	std::cout <<	set_ft2.erase(-11)  << std::endl;
+	std::cout <<	set_ft2.erase(-11) << std::endl;
 
 
 	// set_std2[30] = 30;
@@ -242,11 +237,7 @@ std::cout <<	set_ft2.erase(-11) << std::endl;
 
 //set_ft2.print();
 
-
-
 	print_sets(set_std2, set_ft2);
-
-
 
 	std::cout << STD_PR_COLOR << "STD set END() == another STD set END(): " << &(*set_std2.begin()) << " " << &(*set_std2.end()) << std::endl;
 	std::cout <<  FT_PR_COLOR << " FT set END() == another STD set END(): " << &(*set_ft2.begin()) << " " << &(*set_ft2.end())  << std::endl;
@@ -350,28 +341,7 @@ std::cout <<	set_ft2.erase(-11) << std::endl;
 	std::cout << STD_PR_COLOR << "STD const_iterator BEGIN() after ++: " << *(it_set_std_const) << std::endl;
 	std::cout <<  FT_PR_COLOR << " FT const_iterator BEGIN() after ++: " << *(it_set_ft_const) << std::endl;
 
-	// it_set_ft_const = 3;
-
-	// set_ft[16] = 16;
-	// set_ft[19] = 19;
-	// set_ft[-4] = 4;
-	// set_ft[23] = 23;
-	// set_ft[64] = 64;
-	// set_ft[55] = 55;
-	// set_ft[-3] = -3;
-	// set_ft[48] = 48;
-	// set_ft[-7] = -7;
-	// set_ft[-22] = -22;
-	// set_ft[-33] = 33;
-	// set_ft[96] = 96;
-	// set_ft[88] = 88;
-	// set_ft[42] = 42;
-
-
-//	set_ft.try_leftrotate(11);
-
-
-	// ft::set<int>::iterator	it_set_ft2 = set_ft.end();
+	// *it_set_ft_const = 3;
 
 	std::set<int>::reverse_iterator	it_set_std2 = set_std.rbegin();
 	ft::set<int>::reverse_iterator		it_set_ft2 = set_ft.rbegin();
@@ -381,10 +351,6 @@ std::cout <<	set_ft2.erase(-11) << std::endl;
 
 	std::cout << STD_PR_COLOR << "STD revers iterator REND()++ = " << *(it_set_std2) << std::endl;
 	std::cout << FT_PR_COLOR << "STD revers iterator REND()++ = " << *(it_set_ft2) << std::endl;
-
-	// ft::set<int>	ft_set3(set_ft.begin(), set_ft.end());
-	// ft_set3.print();
-
 
 	set_std.erase(set_std.begin(), --set_std.end());
 	set_ft.erase(set_ft.begin(), --set_ft.end());
@@ -412,7 +378,24 @@ std::cout <<	set_ft2.erase(-11) << std::endl;
 	std::cout << STD_PR_COLOR << "STD SIZE() after ERASE(begin(), --end()): " << set_std.size() << std::endl;
 	std::cout <<  FT_PR_COLOR << " FT SIZE() after ERASE(begin(), --end()): " << set_ft.size() << std::endl;
 
-//	print_sets(set_std, set_ft);
+	print_sets(set_std, set_ft);
 
-	//while(1);
+	std::cout << STD_PR_COLOR << "STD set == set: " << (set_std == set_std) << std::endl;
+	std::cout << FT_PR_COLOR <<  " FT set == set: " << (set_ft == set_ft) << std::endl;
+
+	std::set<int>	set_std_swap;
+	ft::set<int>	set_ft_swap;
+
+	set_std.swap(set_std_swap);
+	set_ft.swap(set_ft_swap);
+
+	print_sets(set_std, set_ft);
+
+
+	std::swap(set_std, set_std_swap);
+	ft::swap(set_ft, set_ft_swap);
+
+	print_sets(set_std, set_ft);
+
+	// while(1);
 }

@@ -21,7 +21,6 @@ namespace ft{
 			typedef	ft::reverse_iterator<iterator>			reverse_iterator;
 			typedef	ft::reverse_iterator<const_iterator>	const_reverse_iterator;
 
-
 		private:
 			pointer			_start_cont;
 			pointer			_end_cont;
@@ -29,11 +28,8 @@ namespace ft{
 			allocator_type	_alloc;
 
 		public:
-			//vector(void);
-			
 			explicit	vector(const allocator_type& alloc = allocator_type()): 
 			_alloc(alloc), _start_cont(nullptr), _end_cont(nullptr), _end_el(nullptr){};
-
 			explicit	vector(size_type count, const_reference value = value_type(), const allocator_type& alloc = allocator_type()):
 			_alloc(alloc), _start_cont(nullptr), _end_cont(nullptr), _end_el(nullptr)
 			{
@@ -85,20 +81,12 @@ namespace ft{
 			};
 
 			void	assign(size_type count, const_reference value){
-				// this->clear();
-				// this->_alloc.deallocate(this->_start_cont, this->capacity());
-				// this->_start_cont = nullptr;
-				// this->_end_cont = this->_start_cont;
 				*this = vector(count, value);
 			};
 			
 			template<class InputIt>
 			void	assign(InputIt first, InputIt last,
 			typename	ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type = 0){
-				// this->clear();
-				// this->_alloc.deallocate(this->_start_cont, this->capacity());
-				// this->_start_cont = nullptr;
-				// this->_end_cont = this->_start_cont;
 				*this = vector(first, last);
 			};
 			
@@ -214,7 +202,7 @@ namespace ft{
 				while (i < this->size())
 					this->_alloc.construct(new_end_el++, this->_start_cont[i++]);
 				this->clear();
-				this->_alloc.deallocate(this->_start_cont, this->capacity());// maybe some need to free memory
+				this->_alloc.deallocate(this->_start_cont, this->capacity());
 				this->_start_cont = new_start;
 				this->_end_cont = this->_start_cont + new_cap;
 				this->_end_el = new_end_el;
@@ -224,10 +212,8 @@ namespace ft{
 			{return (this->_end_cont - this->_start_cont);};
 
 		//modifiers
-			void	clear(void)
-			{
-				for (size_type i = 0; i < this->size(); i++)
-				{
+			void	clear(void){
+				for (size_type i = 0; i < this->size(); i++){
 					this->_alloc.destroy(this->_start_cont + i);
 				}
 				this->_end_el = this->_start_cont;
@@ -236,8 +222,6 @@ namespace ft{
 			iterator	insert(iterator pos, const_reference value)
 			{
 				int	inp_pos = &(*pos) - this->_start_cont;
-				// if (inp_pos < 0)
-				// 	return (this->begin());
 				this->insert(pos, 1, value);
 				return(this->begin() + inp_pos);
 			};
@@ -277,16 +261,13 @@ namespace ft{
 				else {
 					while (tmp >= this->_start_cont){
 						tmp--;
-						if (tmp - this->_start_cont >= count)
-						{
+						if (tmp - this->_start_cont >= count){
 							this->_alloc.construct(tmp, *(tmp - count));
 						}
-						else if ((tmp - this->_start_cont < inp_pos + count))
-						{
+						else if ((tmp - this->_start_cont < inp_pos + count)){
 							this->_alloc.construct(tmp, value);
 						}
-						else
-						{
+						else{
 							this->_alloc.construct(tmp, value_type());
 						}
 					}
@@ -332,16 +313,13 @@ namespace ft{
 				else {
 					while (tmp > this->_start_cont){
 						tmp--;
-						if (tmp - this->_start_cont >= inp_dist)
-						{
+						if (tmp - this->_start_cont >= inp_dist){
 							this->_alloc.construct(tmp, *(tmp - inp_dist));
 						}
-						else if ((tmp - this->_start_cont < inp_pos + inp_dist))
-						{
+						else if ((tmp - this->_start_cont < inp_pos + inp_dist)){
 							this->_alloc.construct(tmp, *(--last));
 						}
-						else
-						{
+						else{
 							this->_alloc.construct(tmp, value_type());
 						}
 					}
@@ -349,22 +327,11 @@ namespace ft{
 				this->_end_el = this->_start_cont + new_size + empty_slots;
 			};
 
-			//iterator	erase(iterator pos, iterator pos2 = iterator(nullptr))
 			iterator	erase(iterator pos, iterator pos2)
 			{
 				if ((pos >= this->begin()) && (pos < this->end()))
 				{
-				/*	if (pos2 == iterator(nullptr)){
-						iterator	tmp = pos;
-						while (tmp != this->end() - 1){
-							*tmp = *(tmp + 1);
-							tmp++;
-						}
-						this->_alloc.destroy(&(*tmp));
-						(this->_end_el)--;
-						return (pos);
-					}
-					else */if (pos < pos2){
+					if (pos < pos2){
 						iterator	tmp = pos;
 						int			dist = &(*pos2) - &(*pos);
 						while (tmp != this->end() - dist){
@@ -446,7 +413,7 @@ namespace ft{
 	template<class T, class Alloc>
 	bool operator==(const ft::vector<T, Alloc>& lhs, const ft::vector<T, Alloc>& rhs){
 		if (lhs.size() != rhs.size())
-			return (false);
+			return (0);
 		typename ft::vector<T>::const_iterator	it_lhs = lhs.begin();
 		typename ft::vector<T>::const_iterator	it_rhs = rhs.begin();
 		while (it_lhs != lhs.end()){
@@ -455,6 +422,8 @@ namespace ft{
 			it_lhs++;
 			it_rhs++;
 		}
+		if (it_lhs != lhs.end() || it_rhs != rhs.end())
+			return (0);
 		return (1);
 	}
 	template<class T, class Alloc>
@@ -478,13 +447,11 @@ namespace ft{
 		return (!(lhs < rhs));
 	}
 
-
 	template<class T, class Alloc>
 	void	swap(const ft::vector<T, Alloc>& lhs,
 				const ft::vector<T, Alloc>& rhs){
 		lhs.swap(rhs);
 	}
-
 }
 
 #endif
