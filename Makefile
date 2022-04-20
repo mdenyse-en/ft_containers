@@ -15,11 +15,8 @@ INCS_B	= ./includes/iterators.hpp \
 		./includes/RBTree.hpp
 
 SRCS	= ./sources/my_main.cpp
-# ./sources/main.cpp
 
 SRCS_B	= ./sources/my_main_bonus.cpp
-		
-#		./sources/stack.cpp
 
 OBJS	= $(SRCS:.cpp=.o)
 
